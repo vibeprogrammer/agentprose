@@ -57,11 +57,15 @@ export function siteExec(ctx: SiteCtx) {
           const u = new URL(cfg.searchEndpoint, here());
           u.searchParams.set('q', q);
           u.searchParams.set('limit', String(limit));
-          const r = await fetch(u.href);
-          if (r.ok) {
-            const j = await r.json();
-            const items: PostSummary[] = (j.items || j.results || []).filter(f);
-            return { query: q, count: items.length, results: items.slice(0, limit).map(brief) };
+          try {
+            const r = await fetch(u.href);
+            if (r.ok) {
+              const j = await r.json();
+              const items: PostSummary[] = (j.items || j.results || []).filter(f);
+              return { query: q, count: items.length, results: items.slice(0, limit).map(brief) };
+            }
+          } catch {
+            /* endpoint unreachable, blocked or not JSON: fall back to the site's own search below */
           }
         }
         if (src.search) {

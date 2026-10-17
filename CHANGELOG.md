@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- `data-cloud` attribute: with `data-key`, turns on hosted analytics (`/v1/collect`) and hosted search (`/v1/search`) of an agentprose Cloud host in one attribute.
+- Analytics beacon v2: adds the result count (`n`), the citation verdict (`found`), the post URL argument (`post`), a short error code (`err`) and a random per-page-load id (`sid`). Still never sends post content or the quote text.
+
+### Fixed
+- `search_posts` with `searchEndpoint` now falls back to the site's own search when the endpoint throws (network, CORS) as well as when it answers non-OK (e.g. 429 over quota). Before, a thrown fetch failed the tool.
+
 ## [0.1.0] - 2026-10-17
 
 ### Changed

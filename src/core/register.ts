@@ -17,6 +17,33 @@ function ctx(): { api: any; mode: Mode } {
   return { api: undefined, mode: 'none' };
 }
 
+const sid = Math.random().toString(36).slice(2, 10);
+
+/**
+ * The analytics beacon (v2). Never carries post content: tool, outcome, latency, page, the search
+ * query (≤200 chars), the result count, the citation verdict, the post URL argument, and a random
+ * per-page-load id so a dashboard can group one agent session's calls. Nothing is stored in the browser.
+ */
+export function beacon(ev: ToolCallEvent, input: any, result: any, cfg: Pick<Config, 'analyticsKey'>) {
+  const i = input || {};
+  const r = result && typeof result === 'object' ? result : {};
+  const n = Array.isArray(r.results) ? r.results.length : Array.isArray(r.items) ? r.items.length : undefined;
+  return {
+    v: 2,
+    key: cfg.analyticsKey,
+    tool: ev.tool,
+    ok: ev.ok,
+    ms: ev.ms,
+    page: ev.page,
+    query: typeof i.query === 'string' ? i.query.slice(0, 200) : undefined,
+    n,
+    found: typeof r.found === 'boolean' ? r.found : undefined,
+    post: typeof i.url === 'string' ? i.url.slice(0, 500) : undefined,
+    err: ev.error ? String(ev.error).slice(0, 100) : undefined,
+    sid,
+  };
+}
+
 /** Wraps execute with timing, error capture and the analytics hook. Errors become structured results. */
 export function instrument(t: ToolDefinition, cfg: Config): ToolDefinition {
   return {
@@ -25,8 +52,9 @@ export function instrument(t: ToolDefinition, cfg: Config): ToolDefinition {
       const t0 = Date.now();
       let ok = true;
       let error: string | undefined;
+      let result: any;
       try {
-        const r = await t.execute(input || {}, opts);
+        const r = (result = await t.execute(input || {}, opts));
         if (r && typeof r === 'object' && 'error' in (r as any)) {
           ok = false;
           error = String((r as any).error);
@@ -41,10 +69,7 @@ export function instrument(t: ToolDefinition, cfg: Config): ToolDefinition {
         try {
           cfg.onToolCall?.(ev);
           document.dispatchEvent(new CustomEvent('agentprose:call', { detail: ev }));
-          if (cfg.analytics) {
-            const q = input && typeof input.query === 'string' ? input.query.slice(0, 200) : undefined;
-            navigator.sendBeacon?.(cfg.analytics, JSON.stringify({ tool: ev.tool, ok, ms: ev.ms, page: ev.page, query: q, key: cfg.analyticsKey, v: 1 }));
-          }
+          if (cfg.analytics) navigator.sendBeacon?.(cfg.analytics, JSON.stringify(beacon(ev, input, result, cfg)));
         } catch {
           /* never let analytics break a tool */
         }
