@@ -30,6 +30,8 @@ const list = (s?: string) => (s ? s.split(',').map((x) => x.trim()).filter(Boole
 const off = (s?: string) => (s === 'false' || s === 'off' ? false : s || undefined);
 
 function configFrom(d: DOMStringMap): Config & { polyfill?: boolean | string } {
+  // data-cloud="https://host" + data-key: hosted analytics and search in one attribute.
+  const cloud = d.cloud && d.key && !d.adapter ? d.cloud.replace(/\/+$/, '') : undefined;
   return {
     index: d.index,
     feeds: list(d.feed || d.feeds),
@@ -42,8 +44,8 @@ function configFrom(d: DOMStringMap): Config & { polyfill?: boolean | string } {
     maxChars: d.maxChars ? +d.maxChars : undefined,
     maxPosts: d.maxPosts ? +d.maxPosts : undefined,
     cacheTtl: d.cache ? +d.cache : undefined,
-    searchEndpoint: d.searchEndpoint,
-    analytics: d.analytics,
+    searchEndpoint: d.searchEndpoint || (cloud && d.cloudSearch !== 'false' ? `${cloud}/v1/search?key=${encodeURIComponent(d.key!)}` : undefined),
+    analytics: d.analytics || (cloud ? `${cloud}/v1/collect` : undefined),
     analyticsKey: d.key && !d.adapter ? d.key : d.analyticsKey,
     navigate: d.navigate !== undefined && d.navigate !== 'false',
     exposedTo: list(d.exposedTo),
