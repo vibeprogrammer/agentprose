@@ -3,6 +3,7 @@ import { createAgentTools } from '../../src/index';
 import { beacon } from '../../src/core/register';
 import { staticAdapter } from '../../src/adapters/generic';
 import type { Post } from '../../src/core/types';
+import { cloudBase } from '../../src/core/cloud';
 
 const posts: Post[] = [
   { url: 'https://ex.com/posts/webmcp-intro/', slug: 'webmcp-intro', title: 'WebMCP intro', tags: ['webmcp'], published: '2026-10-10T00:00:00Z', summary: 'Start here', markdown: 'WebMCP lets agents call tools on pages.' },
@@ -76,5 +77,36 @@ describe('searchEndpoint fallback', () => {
     const i = createAgentTools({ adapter: staticAdapter(posts), register: false, searchEndpoint: 'https://cloud.test/v1/search?key=k' });
     const r: any = await i.call('search_posts', { query: 'pwa' });
     expect(r.results).toEqual([expect.objectContaining({ url: 'https://ex.com/posts/pwa/' })]);
+  });
+});
+
+describe('cloud base (data-cloud optional)', () => {
+  const page = 'https://blog.example';
+  it('uses data-cloud when set, without a trailing slash', () => {
+    expect(cloudBase({ cloud: 'https://cloud.test/', key: 'pk_1' }, 'https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js', page)).toBe('https://cloud.test');
+  });
+  it('defaults to the script origin when only data-key is set', () => {
+    expect(cloudBase({ key: 'pk_1' }, 'https://cloud.test/v/0.1.0/agentprose.min.js', page)).toBe('https://cloud.test');
+    expect(cloudBase({ key: 'pk_1' }, 'https://cloud.test:8443/agentprose.min.js', page)).toBe('https://cloud.test:8443');
+  });
+  it('stays off and warns on public CDNs', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    for (const src of ['https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js', 'https://unpkg.com/agentprose@0.1/dist/agentprose.min.js']) {
+      expect(cloudBase({ key: 'pk_1' }, src, page)).toBeUndefined();
+    }
+    expect(warn).toHaveBeenCalledTimes(2);
+    expect(String(warn.mock.calls[0][0])).toContain('data-cloud');
+    warn.mockRestore();
+  });
+  it('never infers from the page origin, an adapter key, explicit endpoints or a missing key', () => {
+    expect(cloudBase({ key: 'pk_1' }, 'https://blog.example/js/agentprose.min.js', page)).toBeUndefined();
+    expect(cloudBase({ key: 'cms_token', adapter: 'ghost' }, 'https://cloud.test/agentprose.min.js', page)).toBeUndefined();
+    expect(cloudBase({ key: 'pk_1', analytics: 'https://stats.example/c' }, 'https://cloud.test/agentprose.min.js', page)).toBeUndefined();
+    expect(cloudBase({ key: 'pk_1', searchEndpoint: 'https://s.example/q' }, 'https://cloud.test/agentprose.min.js', page)).toBeUndefined();
+    expect(cloudBase({}, 'https://cloud.test/agentprose.min.js', page)).toBeUndefined();
+    expect(cloudBase({ key: 'pk_1' }, undefined, page)).toBeUndefined();
+  });
+  it('data-cloud="false" turns the Cloud off', () => {
+    expect(cloudBase({ cloud: 'false', key: 'pk_1' }, 'https://cloud.test/agentprose.min.js', page)).toBeUndefined();
   });
 });

@@ -27,7 +27,7 @@ Everything is optional.
 | `data-cache` | `0` | Seconds to cache the index in sessionStorage (default 600) |
 | `data-search-endpoint` | `https://search.example.com/q` | Remote search: `GET ?q=&limit=` → `{ items: [...] }` |
 | `data-analytics` | `https://stats.example.com/agent` | Beacon per tool call (v2): `{v, key, tool, ok, ms, page, query?, n?, found?, post?, err?, sid}`. `query` only for search tools (≤200 chars), `n` = result count, `found` = citation verdict, `post` = URL argument, `sid` = random id per page load. Never post content |
-| `data-cloud` | `https://cloud.agentprose.dev` | With `data-key`: hosted analytics (`/v1/collect`) and hosted search (`/v1/search`) in one attribute. `data-cloud-search="false"` keeps search local |
+| `data-cloud` | `https://cloud.agentprose.dev` | With `data-key`: hosted analytics (`/v1/collect`) and hosted search (`/v1/search`) in one attribute. `data-cloud-search="false"` keeps search local. Optional when the script itself is served by your agentprose Cloud (e.g. `https://cloud.agentprose.dev/v/0.1.0/agentprose.min.js`): with `data-key` and no `data-cloud`, the script's origin is used. Required when loading from jsDelivr or unpkg (agentprose warns in the console if it is missing). `data-cloud="false"` turns the Cloud off. The page's own origin is never treated as a Cloud |
 | `data-key` | `site_123` | Site key sent with analytics beacons (or the adapter's key when `data-adapter` is set) |
 | `data-exposed-to` | `https://partner.example` | Origins of other frames allowed to see the tools (WebMCP `exposedTo`) |
 | `data-polyfill` | (flag) or a URL | Load the MCP-B WebMCP polyfill when the browser has no `document.modelContext` |

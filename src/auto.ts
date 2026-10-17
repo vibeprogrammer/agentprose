@@ -1,12 +1,13 @@
 /**
  * The one-line install:
- *   <script src="https://cdn.jsdelivr.net/npm/agentprose/dist/agentprose.min.js" defer></script>
+ *   <script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer></script>
  * Optional data-* attributes configure it (see docs/configuration.md). Never throws.
  */
 import { createAgentTools, VERSION, type Instance } from './index';
 import type { Config, ContentAdapter } from './core/types';
 import { extractPage, extractSite } from './core/extract';
 import { toMarkdown } from './core/markdown';
+import { cloudBase } from './core/cloud';
 
 type Factory = (o: Record<string, string>) => ContentAdapter;
 interface Global {
@@ -31,7 +32,8 @@ const off = (s?: string) => (s === 'false' || s === 'off' ? false : s || undefin
 
 function configFrom(d: DOMStringMap): Config & { polyfill?: boolean | string } {
   // data-cloud="https://host" + data-key: hosted analytics and search in one attribute.
-  const cloud = d.cloud && d.key && !d.adapter ? d.cloud.replace(/\/+$/, '') : undefined;
+  // Without data-cloud, a script served by an agentprose Cloud uses that origin (see core/cloud.ts).
+  const cloud = cloudBase(d, script?.src, location.origin);
   return {
     index: d.index,
     feeds: list(d.feed || d.feeds),

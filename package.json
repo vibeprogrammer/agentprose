@@ -1,7 +1,7 @@
 {
   "name": "agentprose",
   "version": "0.1.0",
-  "description": "Make any blog or CMS readable by AI agents through WebMCP \u2014 one script tag, zero config, read-only tools for articles, search, sections and citations.",
+  "description": "Make any blog or CMS readable by AI agents through WebMCP — one script tag, zero config, read-only tools for articles, search, sections and citations.",
   "keywords": [
     "webmcp",
     "mcp",
@@ -63,6 +63,8 @@
   "files": [
     "dist",
     "!dist/meta-core.json",
+    "!dist/sizes.json",
+    "!dist/wordpress",
     "README.md",
     "LICENSE",
     "CHANGELOG.md"
@@ -73,6 +75,10 @@
   ],
   "engines": {
     "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "build": "node scripts/build.mjs && tsc -p tsconfig.json",

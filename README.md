@@ -8,7 +8,7 @@ agentprose turns the content your site already publishes into read-only [WebMCP]
 
 [Live demo](https://vibeprogrammer.github.io/agentprose-demo/) · [Docs](docs/) · [Tools](docs/tools.md) · [Adapters](docs/adapters.md) · [CLI](docs/cli.md) · [Security](SECURITY.md)
 
-`9.1 KB gzipped` · `0 runtime dependencies in the browser` · `MIT`
+`9.4 KB gzipped` · `0 runtime dependencies in the browser` · `MIT`
 
 </div>
 
@@ -149,7 +149,7 @@ The full landscape, with sources, is in [docs/comparison.md](docs/comparison.md)
 
 ## Performance & safety
 
-- **9.1 KB gzipped** core. It's deferred and doesn't touch layout. The core works with strict CSP: no `eval`, no inline code, and scripts load only from the script's own directory. The lazily loaded engine is 6.6 KB, and each adapter is 2–3 KB.
+- **9.4 KB gzipped** core. It's deferred and doesn't touch layout. The core works with strict CSP: no `eval`, no inline code, and scripts load only from the script's own directory. The lazily loaded engine is 6.6 KB, and each adapter is 2–3 KB.
 - **Read-only.** The only tool that does anything is `navigate_to`, which is opt-in and same-origin only.
 - **Bounded output.** Answers are capped (`maxChars`, default 20,000) and continue with `offset`/`next_offset`. Indexes are capped (`maxPosts`, default 2,000).
 - **Same-origin only.** agentprose fetches only your own pages, feeds and sitemaps. It never acts as an open proxy.
@@ -178,7 +178,7 @@ Learn which posts agents read, what they search for and what comes up empty. Sea
 
 ```bash
 npm install
-npm run typecheck && npm test   # 76 unit tests (vitest + happy-dom/linkedom)
+npm run typecheck && npm test   # 87 unit tests (vitest + happy-dom/linkedom)
 npm run build                   # dist/, prints gzipped sizes, fails over budget
 CHROME=$(which chromium) npm run test:e2e   # 12 end-to-end tests in headless Chromium (native WebMCP flag)
 npm run demo                    # builds the demo blog into demo/site

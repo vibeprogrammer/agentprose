@@ -3,7 +3,7 @@
 ```
             page load                                   first site-wide tool call
 ┌─────────────────────────────────┐         ┌──────────────────────────────────────────────┐
-│ agentprose.min.js  (9.1 KB gz)     │ ──────▶ │ agentprose.index.min.js  (6.6 KB gz, lazy)      │
+│ agentprose.min.js  (9.4 KB gz)     │ ──────▶ │ agentprose.index.min.js  (6.6 KB gz, lazy)      │
 │ • reads data-* config           │  loads  │ • autoSource: agentprose.json → feeds → sitemap │
 │ • builds tool definitions       │         │   → llms.txt (+ Pagefind for search)         │
 │ • registers on document.        │         │ • BM25F SearchIndex, related posts           │
