@@ -6,11 +6,22 @@
 
 agentprose turns the content your site already publishes into read-only [WebMCP](https://webmachinelearning.github.io/webmcp/) tools. Agents in the browser can read the current article, search the archive, open a section and cite you accurately, so they don't have to scrape your HTML.
 
-[Live demo](https://vibeprogrammer.github.io/agentprose-demo/) · [Docs](docs/) · [Tools](docs/tools.md) · [Adapters](docs/adapters.md) · [CLI](docs/cli.md) · [Security](SECURITY.md)
+[Live demo](https://vibeprogrammer.github.io/agentprose-demo/) · [Docs](docs/) · [Tools](docs/tools.md) · [Adapters](docs/adapters.md) · [CLI](docs/cli.md) · [Security](SECURITY.md) · [agentprose Cloud](https://agentprose.cloud)
 
-`9.4 KB gzipped` · `0 runtime dependencies in the browser` · `MIT`
+[![npm version](https://img.shields.io/npm/v/agentprose?color=4338ca&label=npm)](https://www.npmjs.com/package/agentprose)
+[![License: MIT](https://img.shields.io/badge/license-MIT-34d399)](LICENSE)
+[![Core size](https://img.shields.io/badge/core-9.4%20KB%20gzipped-4338ca)](#performance--safety)
+[![CI](https://github.com/vibeprogrammer/agentprose/actions/workflows/ci.yml/badge.svg)](https://github.com/vibeprogrammer/agentprose/actions/workflows/ci.yml)
+
+`0 runtime dependencies in the browser` · `read-only tools` · `works on any site`
+
+<!-- Product Hunt badge: uncomment on launch day and replace POST_ID / the post URL.
+<a href="https://www.producthunt.com/posts/agentprose?utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-agentprose" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=POST_ID&theme=light" alt="agentprose - Make any blog readable by AI agents | Product Hunt" width="250" height="54" /></a>
+-->
 
 </div>
+
+> **agentprose Cloud** · [agentprose.cloud](https://agentprose.cloud) adds hosted search, agent analytics (which agents read, searched and cited what) and zero-config setup: one script tag with your site's `data-key`. Optional. The library below is complete without it, and stays MIT.
 
 ---
 
@@ -21,6 +32,8 @@ agentprose turns the content your site already publishes into read-only [WebMCP]
 That's the whole install. agentprose needs no build step, no backend, no account and no configuration.
 
 ![The agentprose demo blog with the inspector panel listing its WebMCP tools](docs/assets/demo.png)
+
+<!-- Launch GIF slot: docs/assets/demo.gif (about 20 s: an agent calls search_posts and get_citation on the demo blog). Swap it in above the screenshot when it exists. -->
 
 ## Why
 
@@ -69,7 +82,13 @@ Nothing is fetched on page load. Registering the tools costs no network requests
         data-subscribe="https://example.com/newsletter"></script>
 ```
 
-Every option is a `data-*` attribute; see [docs/configuration.md](docs/configuration.md). Add `?agentprose-inspect` to any URL to open the 🔌 inspector. It lists the registered tools and lets you call them, in any browser.
+Every option is a `data-*` attribute; see [docs/configuration.md](docs/configuration.md).
+
+Using [agentprose Cloud](https://agentprose.cloud)? Load the same library from the Cloud instead. Your site's public key (`pk_…`, from the dashboard) is the only attribute, and hosted search and agent analytics switch on by themselves:
+
+```html
+<script src="https://agentprose.cloud/v/0.1.0/agentprose.min.js" data-key="pk_…" defer></script>
+``` Add `?agentprose-inspect` to any URL to open the 🔌 inspector. It lists the registered tools and lets you call them, in any browser.
 
 ### 2. npm (apps, frameworks, custom tools)
 
@@ -163,7 +182,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security.md](docs/security.md).
 document.addEventListener('agentprose:call', (e) => console.log(e.detail)); // { tool, ok, ms, page, args }
 ```
 
-Learn which posts agents read, what they search for and what comes up empty. Searches that return nothing point to posts you haven't written yet. A hosted dashboard is on the [roadmap](docs/BUSINESS.md).
+Learn which posts agents read, what they search for and what comes up empty. Searches that return nothing point to posts you haven't written yet. Want it without building anything? [agentprose Cloud](https://agentprose.cloud) is the hosted dashboard: agents, tools, latency, zero-result searches and verified citations, with a free plan.
 
 ## Roadmap
 
@@ -172,7 +191,8 @@ Learn which posts agents read, what they search for and what comes up empty. Sea
 - [ ] `agentprose build` plugins for Astro, Eleventy and Next.js (zero-step indexing)
 - [ ] Semantic search ("ask this blog") via an optional embedding index
 - [ ] More adapters: Payload, Directus, Hashnode, Contentstack
-- [ ] agentprose Cloud: agent analytics, hosted index and search, managed CMS proxy ([BUSINESS.md](docs/BUSINESS.md))
+- [x] [agentprose Cloud](https://agentprose.cloud): agent analytics and hosted index and search
+- [ ] agentprose Cloud: managed CMS proxy ([BUSINESS.md](docs/BUSINESS.md))
 
 ## Development
 
