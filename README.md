@@ -88,7 +88,9 @@ Using [agentprose Cloud](https://agentprose.cloud)? Load the same library from t
 
 ```html
 <script src="https://agentprose.cloud/v/0.1.0/agentprose.min.js" data-key="pk_…" defer></script>
-``` Add `?agentprose-inspect` to any URL to open the 🔌 inspector. It lists the registered tools and lets you call them, in any browser.
+```
+
+Add `?agentprose-inspect` to any URL to open the 🔌 inspector. It lists the registered tools and lets you call them, in any browser.
 
 ### 2. npm (apps, frameworks, custom tools)
 
