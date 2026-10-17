@@ -1,0 +1,7 @@
+node_modules/
+dist/
+demo/site/
+coverage/
+*.log
+.DS_Store
+wordpress-plugin/readmcp/assets/

@@ -1,0 +1,3 @@
+- [ ] Tests added or updated (`npm test`, `npm run test:e2e`)
+- [ ] `npm run build` stays under the size budget
+- [ ] Docs updated (`docs/`, `node scripts/docs-tools.mjs` if tools changed)

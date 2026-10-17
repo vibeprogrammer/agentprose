@@ -1,0 +1,98 @@
+{
+  "name": "readmcp",
+  "version": "0.1.0",
+  "description": "Make any blog or CMS readable by AI agents through WebMCP \u2014 one script tag, zero config, read-only tools for articles, search, sections and citations.",
+  "keywords": [
+    "webmcp",
+    "mcp",
+    "model-context-protocol",
+    "ai-agents",
+    "llm",
+    "blog",
+    "cms",
+    "wordpress",
+    "ghost",
+    "sanity",
+    "contentful",
+    "strapi",
+    "enonic",
+    "storyblok",
+    "hugo",
+    "jekyll",
+    "astro",
+    "eleventy",
+    "nextjs",
+    "llms.txt",
+    "agent-readable"
+  ],
+  "license": "MIT",
+  "author": "Maxim Salnikov and readmcp contributors",
+  "homepage": "https://readmcp.sites.tab.bot/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vibeprogrammer/readmcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vibeprogrammer/readmcp/issues"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
+  "unpkg": "./dist/readmcp.min.js",
+  "jsdelivr": "./dist/readmcp.min.js",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./full": {
+      "types": "./dist/types/full.d.ts",
+      "import": "./dist/full.js"
+    },
+    "./adapters/*": {
+      "types": "./dist/types/adapters/*.d.ts",
+      "import": "./dist/adapters/*.js"
+    },
+    "./readmcp.min.js": "./dist/readmcp.min.js",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "readmcp": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "!dist/meta-core.json",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": [
+    "./dist/readmcp*.min.js",
+    "./dist/adapters/*.min.js"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs && tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:e2e": "node --test test/e2e/e2e.test.mjs",
+    "demo": "node scripts/demo.mjs",
+    "plugin": "node wordpress-plugin/build.mjs",
+    "size": "node scripts/build.mjs",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+  },
+  "dependencies": {
+    "linkedom": "^0.18.13"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "esbuild": "^0.24.2",
+    "happy-dom": "^15.11.7",
+    "playwright-core": "^1.56.0",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9"
+  }
+}

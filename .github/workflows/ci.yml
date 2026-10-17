@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build   # fails if the core bundle passes 10 KB gzipped
+      - run: node wordpress-plugin/build.mjs
+      - uses: actions/upload-artifact@v4
+        if: matrix.node == 22
+        with:
+          name: dist
+          path: dist/
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - id: chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+      # Native-WebMCP tests run when this Chrome has the WebMCPTesting feature and are skipped (reported) otherwise.
+      - run: npm run test:e2e
+        env:
+          CHROME: ${{ steps.chrome.outputs.chrome-path }}

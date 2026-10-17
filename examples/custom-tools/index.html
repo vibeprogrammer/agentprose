@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Custom tools</title>
+  <script>
+    // Read before readmcp starts. Functions are allowed here (not in data-* attributes).
+    window.ReadMCPConfig = {
+      prefix: 'acme_',
+      exclude: ['get_related_posts'],
+      onToolCall: (e) => navigator.sendBeacon('/stats/agent', JSON.stringify(e)),
+      tools: [
+        {
+          name: 'get_events',
+          title: 'Upcoming events',
+          description: 'Lists upcoming meetups and talks with dates, venues and registration links.',
+          inputSchema: { type: 'object', properties: { limit: { type: 'integer', minimum: 1, maximum: 20 } } },
+          annotations: { readOnlyHint: true },
+          execute: async ({ limit = 5 }) => (await fetch('/events.json').then((r) => r.json())).slice(0, limit),
+        },
+      ],
+    };
+    document.addEventListener('readmcp:ready', (e) => console.log('agent tools:', e.detail.tools.map((t) => t.name)));
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/readmcp@0.1/dist/readmcp.min.js" defer></script>
+</head>
+<body><article><h1>Hello</h1><p>…</p></article></body>
+</html>
