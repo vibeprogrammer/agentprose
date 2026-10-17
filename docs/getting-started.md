@@ -5,10 +5,10 @@
 Put this in your site's `<head>` (or before `</body>`):
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/readmcp@0.1/dist/readmcp.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer></script>
 ```
 
-Pin a version in production (`readmcp@0.1.0`). To self-host, copy `readmcp.min.js`, `readmcp.index.min.js`, `readmcp.inspector.min.js` and the `adapters/` folder from `node_modules/readmcp/dist/` into one directory. The core loads its other files from the directory it was served from.
+Pin a version in production (`agentprose@0.1.0`). To self-host, copy `agentprose.min.js`, `agentprose.index.min.js`, `agentprose.inspector.min.js` and the `adapters/` folder from `node_modules/agentprose/dist/` into one directory. The core loads its other files from the directory it was served from.
 
 Where to put it:
 
@@ -24,12 +24,12 @@ Where to put it:
 
 ## 2. Check what agents see
 
-Open any page with `?readmcp-inspect` added to the URL. The 🔌 panel lists every tool. Fill in the inputs and press **Run**. The panel works in every browser: with native WebMCP it calls `document.modelContext.executeTool()`, otherwise it calls readmcp directly.
+Open any page with `?agentprose-inspect` added to the URL. The 🔌 panel lists every tool. Fill in the inputs and press **Run**. The panel works in every browser: with native WebMCP it calls `document.modelContext.executeTool()`, otherwise it calls agentprose directly.
 
 From a terminal:
 
 ```bash
-npx readmcp inspect https://example.com/a-post/
+npx agentprose inspect https://example.com/a-post/
 ```
 
 ## 3. Try it with a real agent
@@ -50,7 +50,7 @@ Agents that support WebMCP see the same tools.
 The feed + sitemap discovery handles a few thousand posts well. For bigger sites, or for search over full text instead of feed excerpts, generate an index at build time:
 
 ```bash
-npx readmcp build public --base-url https://example.com/
+npx agentprose build public --base-url https://example.com/
 ```
 
-Deploy the generated `readmcp.json` and `readmcp/` folder with the site. See [cli.md](cli.md).
+Deploy the generated `agentprose.json` and `agentprose/` folder with the site. See [cli.md](cli.md).

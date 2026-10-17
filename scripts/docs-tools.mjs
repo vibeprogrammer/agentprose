@@ -30,12 +30,12 @@ md += `## Example: get_current_article
 
 \`\`\`json
 {
-  "url": "https://readmcp.sites.tab.bot/posts/headless-cms-tokens/",
+  "url": "https://blog.example/posts/headless-cms-tokens/",
   "title": "Connecting a headless CMS: which tokens are safe in a page",
   "summary": "WebMCP tools run in the visitor’s browser, so every credential in their config is public…",
   "published": "2026-10-16T09:00:00.000Z",
   "authors": ["Maxim Salnikov"],
-  "tags": ["cms", "security", "readmcp"],
+  "tags": ["cms", "security", "agentprose"],
   "categories": ["Guides"],
   "readingMinutes": 1,
   "isArticle": true,

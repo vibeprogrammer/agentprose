@@ -1,8 +1,8 @@
 'use client';
 // Alternative to the script tag: the npm API with your own data source.
 import { useEffect } from 'react';
-import { createAgentTools } from 'readmcp';
-import { defineAdapter } from 'readmcp/adapters/generic';
+import { createAgentTools } from 'agentprose';
+import { defineAdapter } from 'agentprose/adapters/generic';
 
 const api = defineAdapter({
   name: 'next-api',

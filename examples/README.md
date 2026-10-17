@@ -3,7 +3,7 @@
 | Folder | What |
 |---|---|
 | [static-html](static-html/) | Plain HTML page with the one-line install |
-| [hugo](hugo/) | Hugo partial + `readmcp build` in CI |
+| [hugo](hugo/) | Hugo partial + `agentprose build` in CI |
 | [jekyll](jekyll/) | Jekyll include |
 | [astro](astro/) | Astro layout |
 | [eleventy](eleventy/) | Eleventy base layout + postbuild index |

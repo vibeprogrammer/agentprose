@@ -1,6 +1,6 @@
 /**
  * The one-line install:
- *   <script src="https://cdn.jsdelivr.net/npm/readmcp/dist/readmcp.min.js" defer></script>
+ *   <script src="https://cdn.jsdelivr.net/npm/agentprose/dist/agentprose.min.js" defer></script>
  * Optional data-* attributes configure it (see docs/configuration.md). Never throws.
  */
 import { createAgentTools, VERSION, type Instance } from './index';
@@ -20,7 +20,7 @@ interface Global {
 const w = window as any;
 const script = document.currentScript as HTMLScriptElement | null;
 
-const g: Global = (w.ReadMCP = w.ReadMCP || { adapters: {} });
+const g: Global = (w.AgentProse = w.AgentProse || { adapters: {} });
 g.version = VERSION;
 g.create = createAgentTools;
 (g as any).shared = { extractPage, extractSite, toMarkdown };
@@ -72,27 +72,27 @@ function loadAdapter(name: string): Promise<Factory | undefined> {
 async function start(): Promise<Instance | undefined> {
   try {
     const d = script?.dataset || {};
-    const cfg: Config & { polyfill?: boolean | string } = { ...configFrom(d), ...(w.ReadMCPConfig || {}) };
+    const cfg: Config & { polyfill?: boolean | string } = { ...configFrom(d), ...(w.AgentProseConfig || {}) };
     const name = d.adapter || (!cfg.index && !cfg.adapter && detectWordPress(document) ? 'wordpress' : undefined);
     if (name && !cfg.adapter && name !== 'auto') {
       const f = await loadAdapter(name);
       const o: Record<string, string> = { ...(d as any) };
       if (name === 'wordpress') o.api ||= detectWordPress(document) || new URL('/wp-json/', location.href).href;
       if (f) cfg.adapter = f(o);
-      else if (cfg.debug) console.warn('[readmcp] adapter not found:', name);
+      else if (cfg.debug) console.warn('[agentprose] adapter not found:', name);
     }
     g.instance = createAgentTools(cfg);
     await g.instance.ready;
-    document.dispatchEvent(new CustomEvent('readmcp:ready', { detail: g.instance }));
-    if (d.inspector !== undefined || /[?&]readmcp-inspect/.test(location.search)) {
+    document.dispatchEvent(new CustomEvent('agentprose:ready', { detail: g.instance }));
+    if (d.inspector !== undefined || /[?&]agentprose-inspect/.test(location.search)) {
       const s = document.createElement('script');
-      s.src = new URL('readmcp.inspector.min.js', script?.src || location.href).href;
-      if (d.inspector === 'open' || /[?&]readmcp-inspect/.test(location.search)) s.dataset.open = '';
+      s.src = new URL('agentprose.inspector.min.js', script?.src || location.href).href;
+      if (d.inspector === 'open' || /[?&]agentprose-inspect/.test(location.search)) s.dataset.open = '';
       document.head.appendChild(s);
     }
     return g.instance;
   } catch (e) {
-    if (w.ReadMCPConfig?.debug || script?.dataset.debug !== undefined) console.warn('[readmcp]', e);
+    if (w.AgentProseConfig?.debug || script?.dataset.debug !== undefined) console.warn('[agentprose]', e);
     return undefined;
   }
 }

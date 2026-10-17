@@ -16,7 +16,7 @@ Columns: 1L = one-line script install · AD = zero-config auto-discovery (JSON-L
 | auto-webmcp / keak | ✅ | forms only | ✗ | ✗ | ✗ | ✗ | ✗ | ✅ | ✗ | ✗ | ✗ | ~ | ✅ | ✅ |
 | Hand-rolled Hugo/Jekyll (Chaganti, pardel) | ✗ | ✗ | titles/tags | ✅ (.md) / ✗ | ✗ | ✗ | ✅ | 1 site | ✗ | ✗ | ✗ | ~ | ✗ | ✅ |
 | Vendor MCP servers (Sanity/Contentful/Strapi/WP adapter) | ✗ | ✗ | ✅ | ✅ | ✗ | ✗ | ✅ | ✗ | own CMS | own | server | admin creds | ✅ | not WebMCP |
-| **readmcp** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 6+ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **agentprose** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ 6+ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 ### The 10 sharpest weaknesses of what exists
 1. **Siloed per platform** — Astro-only, WP-only, Contentstack-only; nothing spans static sites + WordPress + Ghost + headless CMS.
@@ -72,6 +72,6 @@ Legend: [P]=page/registry/API read this session; [S]=search snippet only (unveri
 
 
 
-## Where readmcp fits
+## Where agentprose fits
 
-readmcp is a *reader-side* layer. It serves the agent in the visitor's browser, from public content, read-only. The vendors' MCP servers (Sanity, Contentful, Strapi, the WordPress MCP Adapter) serve the *editor's* agent with admin credentials. The two are complementary. readmcp interoperates with MCP-B: it registers into the MCP-B polyfill and is visible to its relay.
+agentprose is a *reader-side* layer. It serves the agent in the visitor's browser, from public content, read-only. The vendors' MCP servers (Sanity, Contentful, Strapi, the WordPress MCP Adapter) serve the *editor's* agent with admin credentials. The two are complementary. agentprose interoperates with MCP-B: it registers into the MCP-B polyfill and is visible to its relay.

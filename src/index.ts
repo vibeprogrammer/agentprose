@@ -30,7 +30,7 @@ export interface Instance {
  * Creates the content tools and registers them with WebMCP.
  *
  * ```ts
- * import { createAgentTools } from 'readmcp';
+ * import { createAgentTools } from 'agentprose';
  * createAgentTools({ index: '/agent-index.json' });
  * ```
  */

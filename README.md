@@ -1,12 +1,12 @@
 <div align="center">
 
-# readmcp
+# agentprose
 
 **Make any blog or CMS readable by AI agents — with one line of JavaScript.**
 
-readmcp turns the content your site already publishes into read-only [WebMCP](https://webmachinelearning.github.io/webmcp/) tools. Agents in the browser can read the current article, search the archive, open a section and cite you accurately, so they don't have to scrape your HTML.
+agentprose turns the content your site already publishes into read-only [WebMCP](https://webmachinelearning.github.io/webmcp/) tools. Agents in the browser can read the current article, search the archive, open a section and cite you accurately, so they don't have to scrape your HTML.
 
-[Live demo](https://readmcp.sites.tab.bot/) · [Docs](docs/) · [Tools](docs/tools.md) · [Adapters](docs/adapters.md) · [CLI](docs/cli.md) · [Security](SECURITY.md)
+[Live demo](https://vibeprogrammer.github.io/agentprose-demo/) · [Docs](docs/) · [Tools](docs/tools.md) · [Adapters](docs/adapters.md) · [CLI](docs/cli.md) · [Security](SECURITY.md)
 
 `9.1 KB gzipped` · `0 runtime dependencies in the browser` · `MIT`
 
@@ -15,18 +15,18 @@ readmcp turns the content your site already publishes into read-only [WebMCP](ht
 ---
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/readmcp@0.1/dist/readmcp.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer></script>
 ```
 
-That's the whole install. readmcp needs no build step, no backend, no account and no configuration.
+That's the whole install. agentprose needs no build step, no backend, no account and no configuration.
 
-![The readmcp demo blog with the inspector panel listing its WebMCP tools](docs/assets/demo.png)
+![The agentprose demo blog with the inspector panel listing its WebMCP tools](docs/assets/demo.png)
 
 ## Why
 
 When an AI agent visits a blog today, it sees navigation, cookie banners and share buttons. Somewhere in the middle is the article. The agent has to guess where the content starts, spends tokens on markup, and has no reliable way to search the archive.
 
-WebMCP lets a page hand the agent **tools** instead. Most existing WebMCP tools are tied to one platform. Some cut every answer off at 1,500 characters, some still call the deprecated `navigator.modelContext`, and some need admin tokens. readmcp is a single drop-in script that works on any site, from a 5-post Jekyll blog to a headless CMS with 50,000 entries.
+WebMCP lets a page hand the agent **tools** instead. Most existing WebMCP tools are tied to one platform. Some cut every answer off at 1,500 characters, some still call the deprecated `navigator.modelContext`, and some need admin tokens. agentprose is a single drop-in script that works on any site, from a 5-post Jekyll blog to a headless CMS with 50,000 entries.
 
 ## What agents get
 
@@ -48,10 +48,10 @@ Every built-in tool is annotated `readOnlyHint` and `untrustedContentHint`, so a
 
 ## How it finds your content
 
-With zero configuration, readmcp reads, in order:
+With zero configuration, agentprose reads, in order:
 
 1. **The page.** It reads schema.org JSON-LD (`BlogPosting`, `Article`, `@graph`), OpenGraph and `article:*` meta, the canonical URL, and the article body. The body comes from `<article>`, `[itemprop=articleBody]`, the common theme classes, or a text-density fallback. Navigation, footers, share widgets, ads and comment forms are stripped.
-2. **A prebuilt index**, if one exists (`/readmcp.json` from the [CLI](docs/cli.md)). Post bodies sit in one small Markdown file each, so the index stays small on large sites.
+2. **A prebuilt index**, if one exists (`/agentprose.json` from the [CLI](docs/cli.md)). Post bodies sit in one small Markdown file each, so the index stays small on large sites.
 3. **Your feeds.** RSS 2.0, Atom and JSON Feed, from `<link rel="alternate">` or the usual paths (`/index.xml`, `/feed.xml`, `/feed/`, `/rss/`).
 4. **`sitemap.xml`**, including sitemap indexes, for every post the feed doesn't list. Tag, category and pagination pages are skipped.
 5. **`llms.txt`**, for titles and summaries.
@@ -65,21 +65,21 @@ Nothing is fetched on page load. Registering the tools costs no network requests
 ### 1. One line (any site)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/readmcp@0.1/dist/readmcp.min.js" defer
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer
         data-subscribe="https://example.com/newsletter"></script>
 ```
 
-Every option is a `data-*` attribute; see [docs/configuration.md](docs/configuration.md). Add `?readmcp-inspect` to any URL to open the 🔌 inspector. It lists the registered tools and lets you call them, in any browser.
+Every option is a `data-*` attribute; see [docs/configuration.md](docs/configuration.md). Add `?agentprose-inspect` to any URL to open the 🔌 inspector. It lists the registered tools and lets you call them, in any browser.
 
 ### 2. npm (apps, frameworks, custom tools)
 
 ```bash
-npm install readmcp
+npm install agentprose
 ```
 
 ```ts
-import { createAgentTools } from 'readmcp';
-import { sanity } from 'readmcp/adapters/sanity';
+import { createAgentTools } from 'agentprose';
+import { sanity } from 'agentprose/adapters/sanity';
 
 const agentTools = createAgentTools({
   adapter: sanity({ projectId: 'abc123', dataset: 'production', urlPattern: '/blog/{slug}/' }),
@@ -103,10 +103,10 @@ agentTools.destroy(); // unregisters (aborts the AbortSignal)
 ### 3. Static index for big sites (Hugo, Jekyll, Astro, Eleventy, Next.js, …)
 
 ```bash
-npx readmcp build public --base-url https://example.com/ --llms
+npx agentprose build public --base-url https://example.com/ --llms
 ```
 
-This writes `readmcp.json` (metadata and a search excerpt per post), one `readmcp/posts/*.md` per post and, optionally, `llms.txt`. The script finds `/readmcp.json` automatically. `npx readmcp inspect https://example.com/some-post/` shows what agents can read on a live page and gives it an agent-readiness score.
+This writes `agentprose.json` (metadata and a search excerpt per post), one `agentprose/posts/*.md` per post and, optionally, `llms.txt`. The script finds `/agentprose.json` automatically. `npx agentprose inspect https://example.com/some-post/` shows what agents can read on a live page and gives it an agent-readiness score.
 
 ## Platforms
 
@@ -122,7 +122,7 @@ This writes `readmcp.json` (metadata and a search excerpt per post), one `readmc
 | **Storyblok** | `data-adapter="storyblok" data-token="…"` | public access token |
 | Anything else | `defineAdapter({ list, get, search?, taxonomies?, site? })` | your call |
 
-A **private** dataset or token can't go in a page, because every visitor can read it. For those, use **proxy mode**: `proxy: 'https://you.example/cms'` sends every request to your endpoint, and your server adds the credential. [examples/proxy](examples/proxy/) has a 30-line Cloudflare Worker and a Node server. readmcp **refuses to start** with credentials shaped like management keys: Contentful `CFPAT-…`, Sanity `sk…` and Ghost Admin keys. Details are in [docs/adapters.md](docs/adapters.md).
+A **private** dataset or token can't go in a page, because every visitor can read it. For those, use **proxy mode**: `proxy: 'https://you.example/cms'` sends every request to your endpoint, and your server adds the credential. [examples/proxy](examples/proxy/) has a 30-line Cloudflare Worker and a Node server. agentprose **refuses to start** with credentials shaped like management keys: Contentful `CFPAT-…`, Sanity `sk…` and Ghost Admin keys. Details are in [docs/adapters.md](docs/adapters.md).
 
 ## Browser support
 
@@ -131,15 +131,15 @@ A **private** dataset or token can't go in a page, because every visitor can rea
 | Chrome with `chrome://flags/#enable-webmcp-testing`, or the WebMCP origin trial | Native `document.modelContext`. Tested end-to-end in Chromium 156. |
 | Any browser + [MCP-B polyfill](https://www.npmjs.com/package/@mcp-b/webmcp-polyfill) (`data-polyfill`) | `document.modelContext` from the polyfill. Tested end-to-end. |
 | Older polyfills exposing `navigator.modelContext` | Used as a fallback (`legacy` mode). |
-| Everything else | Registers nothing, throws nothing, changes nothing. Tools stay callable via `window.ReadMCP.instance.call()`. |
+| Everything else | Registers nothing, throws nothing, changes nothing. Tools stay callable via `window.AgentProse.instance.call()`. |
 
-WebMCP runs only in secure contexts (HTTPS or localhost). Embedded frames need the `tools` Permissions Policy feature. readmcp registers tools with an `AbortSignal`, so `destroy()` removes them cleanly, and it never calls the removed `provideContext` or `unregisterTool`. See [docs/browser-support.md](docs/browser-support.md).
+WebMCP runs only in secure contexts (HTTPS or localhost). Embedded frames need the `tools` Permissions Policy feature. agentprose registers tools with an `AbortSignal`, so `destroy()` removes them cleanly, and it never calls the removed `provideContext` or `unregisterTool`. See [docs/browser-support.md](docs/browser-support.md).
 
 ## Compared with what exists
 
 |  | One-line install | Auto-discovery | Full article (no cap) | Sections / TOC | Search | Any SSG | WordPress | Headless CMS | Proxy mode | Current API |
 |---|---|---|---|---|---|---|---|---|---|---|
-| **readmcp** | ✅ | ✅ | ✅ paged | ✅ | ✅ BM25F / Pagefind / CMS | ✅ | ✅ | ✅ 6 adapters | ✅ | ✅ |
+| **agentprose** | ✅ | ✅ | ✅ paged | ✅ | ✅ BM25F / Pagefind / CMS | ✅ | ✅ | ✅ 6 adapters | ✅ | ✅ |
 | astro-webmcp | config | Astro collections | ✗ 1.5k cap | ✗ | ✅ | Astro only | ✗ | ✗ | ✗ | ✅ |
 | WordPress WebMCP plugins | plugin | ✗ | some | ✗ | WP search | ✗ | ✅ | ✗ | ✗ | mixed |
 | Hand-rolled Hugo/Jekyll scripts | ✗ | ✗ | some | ✗ | titles/tags | one site | ✗ | ✗ | ✗ | ✅ |
@@ -152,7 +152,7 @@ The full landscape, with sources, is in [docs/comparison.md](docs/comparison.md)
 - **9.1 KB gzipped** core. It's deferred and doesn't touch layout. The core works with strict CSP: no `eval`, no inline code, and scripts load only from the script's own directory. The lazily loaded engine is 6.6 KB, and each adapter is 2–3 KB.
 - **Read-only.** The only tool that does anything is `navigate_to`, which is opt-in and same-origin only.
 - **Bounded output.** Answers are capped (`maxChars`, default 20,000) and continue with `offset`/`next_offset`. Indexes are capped (`maxPosts`, default 2,000).
-- **Same-origin only.** readmcp fetches only your own pages, feeds and sitemaps. It never acts as an open proxy.
+- **Same-origin only.** agentprose fetches only your own pages, feeds and sitemaps. It never acts as an open proxy.
 - **No tracking.** Analytics is your callback, or your endpoint (`data-analytics`). It receives tool names, timings, the page and search queries, never content.
 
 See [SECURITY.md](SECURITY.md) and [docs/security.md](docs/security.md).
@@ -160,7 +160,7 @@ See [SECURITY.md](SECURITY.md) and [docs/security.md](docs/security.md).
 ## Analytics hook
 
 ```js
-document.addEventListener('readmcp:call', (e) => console.log(e.detail)); // { tool, ok, ms, page, args }
+document.addEventListener('agentprose:call', (e) => console.log(e.detail)); // { tool, ok, ms, page, args }
 ```
 
 Learn which posts agents read, what they search for and what comes up empty. Searches that return nothing point to posts you haven't written yet. A hosted dashboard is on the [roadmap](docs/BUSINESS.md).
@@ -169,10 +169,10 @@ Learn which posts agents read, what they search for and what comes up empty. Sea
 
 - [x] Zero-config script, 10 tools plus 3 opt-in actions, inspector, CLI, 7 CMS adapters, WordPress plugin
 - [ ] Declarative forms (WebMCP `toolname` attributes) for newsletter sign-up, opt-in
-- [ ] `readmcp build` plugins for Astro, Eleventy and Next.js (zero-step indexing)
+- [ ] `agentprose build` plugins for Astro, Eleventy and Next.js (zero-step indexing)
 - [ ] Semantic search ("ask this blog") via an optional embedding index
 - [ ] More adapters: Payload, Directus, Hashnode, Contentstack
-- [ ] readmcp Cloud: agent analytics, hosted index and search, managed CMS proxy ([BUSINESS.md](docs/BUSINESS.md))
+- [ ] agentprose Cloud: agent analytics, hosted index and search, managed CMS proxy ([BUSINESS.md](docs/BUSINESS.md))
 
 ## Development
 

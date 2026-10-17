@@ -112,7 +112,7 @@ describe('built-in tools', () => {
   it('reports every call to onToolCall and as a DOM event, and turns throws into results', async () => {
     const events: any[] = [];
     const dom: any[] = [];
-    document.addEventListener('readmcp:call', (e: any) => dom.push(e.detail));
+    document.addEventListener('agentprose:call', (e: any) => dom.push(e.detail));
     const i = make({ onToolCall: (e: any) => events.push(e), tools: [{ name: 'boom', description: 'Always throws, to test error handling in tools.', execute: () => { throw new Error('kaput'); } }] });
     await i.call('list_posts');
     expect(await i.call('boom')).toEqual({ error: 'tool_failed', message: 'kaput' });

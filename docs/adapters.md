@@ -1,25 +1,25 @@
 # Adapters
 
-An adapter tells readmcp where posts come from. Without one, readmcp uses the zero-config source (page, `readmcp.json`, feeds, sitemap, llms.txt and Pagefind) and auto-detects WordPress.
+An adapter tells agentprose where posts come from. Without one, agentprose uses the zero-config source (page, `agentprose.json`, feeds, sitemap, llms.txt and Pagefind) and auto-detects WordPress.
 
 **The rule for every adapter:** WebMCP tools run in the visitor's browser, so any credential in the page is public. Use only credentials the vendor designed to be public, or use proxy mode.
 
 | Adapter | Script tag | npm | Safe in the page | Search |
 |---|---|---|---|---|
-| WordPress | auto, or `data-adapter="wordpress" data-api="/wp-json/"` | `readmcp/adapters/wordpress` | nothing needed | REST `search=` |
-| Ghost | `data-adapter="ghost" data-key="<content key>" [data-api="https://site"]` | `readmcp/adapters/ghost` | Content API key | client-side index |
-| Sanity | `data-adapter="sanity" data-project="<id>" [data-dataset] [data-type] [data-url-pattern]` | `readmcp/adapters/sanity` | no token (public dataset) | GROQ `match` + `score()` |
-| Contentful | `data-adapter="contentful" data-space="<id>" data-token="<CDA token>" [data-content-type] [data-url-pattern]` | `readmcp/adapters/contentful` | Delivery API token | CDA `query=` |
-| Enonic XP | `data-adapter="enonic" data-endpoint="<guillotine url>" data-content-type="app:type" [data-site-key]` | `readmcp/adapters/enonic` | public endpoint | Query DSL `fulltext` |
-| Strapi 5/4 | `data-adapter="strapi" data-api="https://cms" [data-collection] [data-url-pattern]` | `readmcp/adapters/strapi` | Public role, no token | `$containsi` on title/description |
-| Storyblok | `data-adapter="storyblok" data-token="<public token>" [data-starts-with="blog/"]` | `readmcp/adapters/storyblok` | public access token | `search_term` |
-| JSON | `data-adapter="generic" data-src="/posts.json"` | `readmcp/adapters/generic` | n/a | client-side index |
+| WordPress | auto, or `data-adapter="wordpress" data-api="/wp-json/"` | `agentprose/adapters/wordpress` | nothing needed | REST `search=` |
+| Ghost | `data-adapter="ghost" data-key="<content key>" [data-api="https://site"]` | `agentprose/adapters/ghost` | Content API key | client-side index |
+| Sanity | `data-adapter="sanity" data-project="<id>" [data-dataset] [data-type] [data-url-pattern]` | `agentprose/adapters/sanity` | no token (public dataset) | GROQ `match` + `score()` |
+| Contentful | `data-adapter="contentful" data-space="<id>" data-token="<CDA token>" [data-content-type] [data-url-pattern]` | `agentprose/adapters/contentful` | Delivery API token | CDA `query=` |
+| Enonic XP | `data-adapter="enonic" data-endpoint="<guillotine url>" data-content-type="app:type" [data-site-key]` | `agentprose/adapters/enonic` | public endpoint | Query DSL `fulltext` |
+| Strapi 5/4 | `data-adapter="strapi" data-api="https://cms" [data-collection] [data-url-pattern]` | `agentprose/adapters/strapi` | Public role, no token | `$containsi` on title/description |
+| Storyblok | `data-adapter="storyblok" data-token="<public token>" [data-starts-with="blog/"]` | `agentprose/adapters/storyblok` | public access token | `search_term` |
+| JSON | `data-adapter="generic" data-src="/posts.json"` | `agentprose/adapters/generic` | n/a | client-side index |
 
 Every adapter also accepts `data-proxy` / `proxy`.
 
 ## WordPress
 
-No configuration. readmcp sees `<link rel="https://api.w.org/">` (WordPress prints it on every page) and switches to the REST API: `/wp/v2/posts` with `search`, `tags`, `categories`, `author`, `after`, `before`, and `_fields` to keep responses small. Sites without pretty permalinks (`?rest_route=`) work too. Custom post types use `types: ['posts', 'docs']` or `data-types="posts,docs"`. The [plugin](../wordpress-plugin/) adds the script and a settings page. Reference: https://developer.wordpress.org/rest-api/reference/posts/
+No configuration. agentprose sees `<link rel="https://api.w.org/">` (WordPress prints it on every page) and switches to the REST API: `/wp/v2/posts` with `search`, `tags`, `categories`, `author`, `after`, `before`, and `_fields` to keep responses small. Sites without pretty permalinks (`?rest_route=`) work too. Custom post types use `types: ['posts', 'docs']` or `data-types="posts,docs"`. The [plugin](../wordpress-plugin/) adds the script and a settings page. Reference: https://developer.wordpress.org/rest-api/reference/posts/
 
 ## Ghost
 
@@ -27,7 +27,7 @@ No configuration. readmcp sees `<link rel="https://api.w.org/">` (WordPress prin
 ghost({ url: 'https://demo.ghost.io', key: 'YOUR_CONTENT_API_KEY' })
 ```
 
-Ghost documents the Content API key as safe for browsers, because it only reads public data (https://docs.ghost.org/content-api). Filters map to NQL (`tag:`, `author:`, `published_at:>=`). Tags marked internal (`#hashtag`) are hidden. Ghost has no full-text search endpoint, so search uses readmcp's client-side index. On Ghost(Pro), paste the script tag into Settings → Code injection. An Admin API key (`id:secret`) is refused.
+Ghost documents the Content API key as safe for browsers, because it only reads public data (https://docs.ghost.org/content-api). Filters map to NQL (`tag:`, `author:`, `published_at:>=`). Tags marked internal (`#hashtag`) are hidden. Ghost has no full-text search endpoint, so search uses agentprose's client-side index. On Ghost(Pro), paste the script tag into Settings → Code injection. An Admin API key (`id:secret`) is refused.
 
 ## Sanity
 
@@ -80,7 +80,7 @@ Each request keeps its path and query but goes to your proxy. The proxy adds the
 ## Writing an adapter
 
 ```ts
-import { defineAdapter } from 'readmcp/adapters/generic';
+import { defineAdapter } from 'agentprose/adapters/generic';
 
 export const myCms = defineAdapter({
   name: 'my-cms',
@@ -96,4 +96,4 @@ export const myCms = defineAdapter({
 });
 ```
 
-Only `list` and `get` are required. When `search` is missing, readmcp ranks `list()` results itself. When `taxonomies` is missing, it counts them from posts. Return `markdown` or `html` from `get` (HTML is converted). For a script-tag build, export `fromAttributes(dataset)` and register it with `window.ReadMCP.adapters['my-cms'] = fromAttributes`.
+Only `list` and `get` are required. When `search` is missing, agentprose ranks `list()` results itself. When `taxonomies` is missing, it counts them from posts. Return `markdown` or `html` from `get` (HTML is converted). For a script-tag build, export `fromAttributes(dataset)` and register it with `window.AgentProse.adapters['my-cms'] = fromAttributes`.

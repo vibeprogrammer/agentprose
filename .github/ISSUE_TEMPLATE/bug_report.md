@@ -11,4 +11,4 @@ about: Something doesn't work
 
 **Browser and version** (and whether `chrome://flags/#enable-webmcp-testing` is on):
 
-**Output of `npx readmcp inspect <url> --json`** (if public):
+**Output of `npx agentprose inspect <url> --json`** (if public):

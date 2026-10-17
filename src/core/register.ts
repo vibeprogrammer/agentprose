@@ -40,7 +40,7 @@ export function instrument(t: ToolDefinition, cfg: Config): ToolDefinition {
         const ev: ToolCallEvent = { tool: t.name, args: input, ok, ms: Date.now() - t0, error, page: typeof location !== 'undefined' ? location.href : '' };
         try {
           cfg.onToolCall?.(ev);
-          document.dispatchEvent(new CustomEvent('readmcp:call', { detail: ev }));
+          document.dispatchEvent(new CustomEvent('agentprose:call', { detail: ev }));
           if (cfg.analytics) {
             const q = input && typeof input.query === 'string' ? input.query.slice(0, 200) : undefined;
             navigator.sendBeacon?.(cfg.analytics, JSON.stringify({ tool: ev.tool, ok, ms: ev.ms, page: ev.page, query: q, key: cfg.analyticsKey, v: 1 }));
@@ -86,7 +86,7 @@ export async function register(tools: ToolDefinition[], cfg: Config): Promise<Re
       }
     }),
   );
-  if (cfg.debug) console.info('[readmcp]', mode, out.registered, out.failed);
+  if (cfg.debug) console.info('[agentprose]', mode, out.registered, out.failed);
   return out;
 }
 

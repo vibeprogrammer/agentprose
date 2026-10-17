@@ -1,5 +1,5 @@
-=== readmcp — Agent-readable content (WebMCP) ===
-Contributors: readmcp
+=== agentprose — Agent-readable content (WebMCP) ===
+Contributors: agentprose
 Tags: ai, agents, webmcp, mcp, llm
 Requires at least: 6.3
 Tested up to: 6.8
@@ -12,7 +12,7 @@ Let AI agents in the browser read, search and cite your posts through WebMCP. Re
 
 == Description ==
 
-WebMCP is a W3C Community Group draft that lets a web page give tools to the AI agent running in the visitor's browser. readmcp registers a set of read-only tools for your content:
+WebMCP is a W3C Community Group draft that lets a web page give tools to the AI agent running in the visitor's browser. agentprose registers a set of read-only tools for your content:
 
 * get_current_article — the post being viewed, as clean Markdown with author, dates, tags and outline
 * search_posts — full-text search through the WordPress REST API
@@ -24,9 +24,9 @@ The script is about 9 KB gzipped, loads deferred, fetches nothing until an agent
 
 == Installation ==
 
-1. Upload the `readmcp` folder to `/wp-content/plugins/`, or install the zip from Plugins → Add New → Upload.
+1. Upload the `agentprose` folder to `/wp-content/plugins/`, or install the zip from Plugins → Add New → Upload.
 2. Activate it. Tools are live on every front-end page.
-3. Optional: Settings → readmcp to set a subscribe URL, post types, a tool prefix or an analytics endpoint.
+3. Optional: Settings → agentprose to set a subscribe URL, post types, a tool prefix or an analytics endpoint.
 4. As an administrator, open any page: the 🔌 panel lists the tools and lets you run them.
 
 == Frequently Asked Questions ==

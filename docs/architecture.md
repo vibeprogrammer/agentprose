@@ -3,8 +3,8 @@
 ```
             page load                                   first site-wide tool call
 ┌─────────────────────────────────┐         ┌──────────────────────────────────────────────┐
-│ readmcp.min.js  (9.1 KB gz)     │ ──────▶ │ readmcp.index.min.js  (6.6 KB gz, lazy)      │
-│ • reads data-* config           │  loads  │ • autoSource: readmcp.json → feeds → sitemap │
+│ agentprose.min.js  (9.1 KB gz)     │ ──────▶ │ agentprose.index.min.js  (6.6 KB gz, lazy)      │
+│ • reads data-* config           │  loads  │ • autoSource: agentprose.json → feeds → sitemap │
 │ • builds tool definitions       │         │   → llms.txt (+ Pagefind for search)         │
 │ • registers on document.        │         │ • BM25F SearchIndex, related posts           │
 │   modelContext (AbortSignal)    │         │ • site-wide tool executors                   │
@@ -19,7 +19,7 @@
 
 | Path | Role |
 |---|---|
-| `src/auto.ts` | Script-tag entry: config from `data-*`, adapter loading, inspector, the `window.ReadMCP` global |
+| `src/auto.ts` | Script-tag entry: config from `data-*`, adapter loading, inspector, the `window.AgentProse` global |
 | `src/index.ts` | `createAgentTools()`, the public API |
 | `src/core/tools.ts` | Tool definitions (names, descriptions, JSON Schemas) and page-level executors |
 | `src/core/site-tools.ts` | Site-wide executors (search, list, taxonomies, related, citation, site info) |
@@ -31,7 +31,7 @@
 | `src/core/search.ts` | BM25F index with prefix matching and accent folding |
 | `src/core/lib.ts` / `lib-lazy.ts` | Static engine (npm) vs. lazily loaded engine (script tag) |
 | `src/adapters/*` | CMS adapters and rich-text renderers |
-| `src/cli/index.ts` | `readmcp build` and `readmcp inspect` (Node, linkedom) |
+| `src/cli/index.ts` | `agentprose build` and `agentprose inspect` (Node, linkedom) |
 | `src/inspector.ts` | The 🔌 panel |
 
 **Design rules**
@@ -44,4 +44,4 @@
 6. **Secrets never reach the page.** Credentials shaped like management keys are refused, and proxy mode exists for private content.
 7. **One code path.** The inspector, `instance.call()`, the CLI and the agent all run the same tool code.
 
-**Premium seams (open, documented, not crippling):** `onToolCall` / `readmcp:call` / `data-analytics` (analytics), `searchEndpoint` (hosted search), `index` (hosted index), `proxy` (managed CMS proxy). See [BUSINESS.md](BUSINESS.md).
+**Premium seams (open, documented, not crippling):** `onToolCall` / `agentprose:call` / `data-analytics` (analytics), `searchEndpoint` (hosted search), `index` (hosted index), `proxy` (managed CMS proxy). See [BUSINESS.md](BUSINESS.md).

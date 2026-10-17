@@ -6,10 +6,10 @@ let p: Promise<Lib> | undefined;
 
 export const loadLib = (): Promise<Lib> =>
   (p ||= new Promise<Lib>((resolve, reject) => {
-    const g = ((window as any).ReadMCP ||= { adapters: {} });
+    const g = ((window as any).AgentProse ||= { adapters: {} });
     if (g.lib) return resolve(g.lib);
     const s = document.createElement('script');
-    s.src = new URL('readmcp.index.min.js', me || location.href).href;
+    s.src = new URL('agentprose.index.min.js', me || location.href).href;
     s.async = true;
     s.onload = () => (g.lib ? resolve(g.lib) : reject(new Error('index module did not load')));
     s.onerror = () => reject(new Error('could not load ' + s.src));

@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <title>Custom tools</title>
   <script>
-    // Read before readmcp starts. Functions are allowed here (not in data-* attributes).
-    window.ReadMCPConfig = {
+    // Read before agentprose starts. Functions are allowed here (not in data-* attributes).
+    window.AgentProseConfig = {
       prefix: 'acme_',
       exclude: ['get_related_posts'],
       onToolCall: (e) => navigator.sendBeacon('/stats/agent', JSON.stringify(e)),
@@ -20,9 +20,9 @@
         },
       ],
     };
-    document.addEventListener('readmcp:ready', (e) => console.log('agent tools:', e.detail.tools.map((t) => t.name)));
+    document.addEventListener('agentprose:ready', (e) => console.log('agent tools:', e.detail.tools.map((t) => t.name)));
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/readmcp@0.1/dist/readmcp.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer></script>
 </head>
 <body><article><h1>Hello</h1><p>…</p></article></body>
 </html>

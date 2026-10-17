@@ -39,7 +39,7 @@ describe('autoSource', () => {
     expect(total).toBe(3);
     expect(items.map((p) => p.url)).toEqual(['https://ex.com/posts/newest/', 'https://ex.com/posts/older/', 'https://ex.com/posts/archived-gem/']);
     expect(items[2]).toMatchObject({ title: 'The archived gem', summary: 'An old classic' });
-    expect(m.calls.map((c) => new URL(c.url).pathname)).toEqual(['/readmcp.json', '/index.xml', '/sitemap.xml', '/llms.txt']);
+    expect(m.calls.map((c) => new URL(c.url).pathname)).toEqual(['/agentprose.json', '/index.xml', '/sitemap.xml', '/llms.txt']);
     // get() on a sitemap-only post fetches and extracts the page
     const gem = await src.get({ slug: 'archived-gem' });
     expect(gem?.markdown).toContain('## Part one');
@@ -47,9 +47,9 @@ describe('autoSource', () => {
     vi.unstubAllGlobals();
   });
 
-  it('prefers a prebuilt readmcp.json and loads sharded markdown on demand', async () => {
-    const idx = { version: 1, site: { name: 'Indexed' }, posts: [{ url: '/a/', title: 'A', text: 'alpha', md: '/readmcp/posts/a.md' }] };
-    const m = mockFetch({ '/readmcp.json': idx, '/readmcp/posts/a.md': '# A\n\nalpha body' });
+  it('prefers a prebuilt agentprose.json and loads sharded markdown on demand', async () => {
+    const idx = { version: 1, site: { name: 'Indexed' }, posts: [{ url: '/a/', title: 'A', text: 'alpha', md: '/agentprose/posts/a.md' }] };
+    const m = mockFetch({ '/agentprose.json': idx, '/agentprose/posts/a.md': '# A\n\nalpha body' });
     vi.stubGlobal('fetch', m.fetch);
     const src = autoSource({}, html('<html><body></body></html>'), B);
     const { items } = await src.list();

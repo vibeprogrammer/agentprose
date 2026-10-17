@@ -5,7 +5,7 @@ Thanks for helping make the web readable by agents.
 ## Setup
 
 ```bash
-git clone https://github.com/vibeprogrammer/readmcp && cd readmcp
+git clone https://github.com/vibeprogrammer/agentprose && cd agentprose
 npm install
 npm run typecheck && npm test
 npm run build            # prints gzipped sizes; fails if the core passes 10 KB

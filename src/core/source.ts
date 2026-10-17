@@ -35,7 +35,7 @@ export function autoSource(cfg: Config, doc: Document = document, loc: string = 
   const base = cfg.baseUrl || new URL(loc).origin + '/';
   const baseDir = base.replace(/\/?$/, '/');
   let pending: Promise<Corpus> | undefined;
-  const cacheKey = 'readmcp:' + baseDir;
+  const cacheKey = 'agentprose:' + baseDir;
 
   async function build(): Promise<Corpus> {
     const ttl = cfg.cacheTtl ?? 600;
@@ -57,7 +57,7 @@ export function autoSource(cfg: Config, doc: Document = document, loc: string = 
       byUrl.set(k, cur ? merge(cur, p) : p);
     };
     const max = cfg.maxPosts ?? 2000;
-    const indexUrl = cfg.index ?? (doc.querySelector('link[rel="readmcp-index"]')?.getAttribute('href') || baseDir + 'readmcp.json');
+    const indexUrl = cfg.index ?? (doc.querySelector('link[rel="agentprose-index"]')?.getAttribute('href') || baseDir + 'agentprose.json');
     if (indexUrl) {
       const t = await fetchText(new URL(indexUrl, base).href);
       try {

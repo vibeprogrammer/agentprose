@@ -122,7 +122,7 @@ export interface Config {
   contentSelector?: string;
   /** Selectors removed from extracted content (in addition to built-in noise). */
   ignoreSelectors?: string[];
-  /** URL of a prebuilt JSON index (from the CLI). Default: /readmcp.json if present. Empty string disables. */
+  /** URL of a prebuilt JSON index (from the CLI). Default: /agentprose.json if present. Empty string disables. */
   index?: string;
   /** Explicit feed URLs. Auto-discovered from <link rel=alternate> when omitted. */
   feeds?: string[];

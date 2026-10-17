@@ -1,9 +1,9 @@
-// Demo blog content. Each post is real, accurate documentation about readmcp and WebMCP,
+// Demo blog content. Each post is real, accurate documentation about agentprose and WebMCP,
 // so the demo doubles as the end-to-end test fixture.
 export const site = {
-  name: 'readmcp demo blog',
+  name: 'agentprose demo blog',
   description: 'A small static blog that AI agents can read through WebMCP — installed with one line of JavaScript.',
-  author: 'readmcp',
+  author: 'agentprose',
 };
 
 export const posts = [
@@ -39,17 +39,17 @@ export const posts = [
   },
   {
     slug: 'one-line-install',
-    title: 'Installing readmcp with one line of JavaScript',
+    title: 'Installing agentprose with one line of JavaScript',
     date: '2026-10-13T09:00:00Z',
-    tags: ['readmcp', 'install', 'webmcp'],
+    tags: ['agentprose', 'install', 'webmcp'],
     category: 'Guides',
     author: 'Maxim Salnikov',
     summary: 'Add one script tag and your blog exposes search, articles, sections and site info to agents. No build step, no backend.',
     body: `
-<p>readmcp reads what your site already publishes — schema.org JSON-LD, OpenGraph tags, the <code>&lt;article&gt;</code> element, your RSS, Atom or JSON Feed, <code>sitemap.xml</code> and <code>llms.txt</code> — and turns it into WebMCP tools.</p>
+<p>agentprose reads what your site already publishes — schema.org JSON-LD, OpenGraph tags, the <code>&lt;article&gt;</code> element, your RSS, Atom or JSON Feed, <code>sitemap.xml</code> and <code>llms.txt</code> — and turns it into WebMCP tools.</p>
 <h2>The one line</h2>
-<pre><code class="language-html">&lt;script src="https://cdn.jsdelivr.net/npm/readmcp@0.1/dist/readmcp.min.js" defer&gt;&lt;/script&gt;</code></pre>
-<p>That is the whole install. On page load readmcp registers its tools and fetches nothing. The first time an agent searches or lists posts, it loads a small engine and reads your feed and sitemap.</p>
+<pre><code class="language-html">&lt;script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer&gt;&lt;/script&gt;</code></pre>
+<p>That is the whole install. On page load agentprose registers its tools and fetches nothing. The first time an agent searches or lists posts, it loads a small engine and reads your feed and sitemap.</p>
 <h2>Optional attributes</h2>
 <table>
   <thead><tr><th>Attribute</th><th>What it does</th></tr></thead>
@@ -61,7 +61,7 @@ export const posts = [
   </tbody>
 </table>
 <h2>Checking it works</h2>
-<p>Open any page with <code>?readmcp-inspect</code> in the URL. A panel lists every registered tool and lets you call them, in any browser.</p>`,
+<p>Open any page with <code>?agentprose-inspect</code> in the URL. A panel lists every registered tool and lets you call them, in any browser.</p>`,
   },
   {
     slug: 'markdown-not-html',
@@ -69,7 +69,7 @@ export const posts = [
     date: '2026-10-14T09:00:00Z',
     tags: ['markdown', 'agents', 'performance'],
     category: 'Concepts',
-    author: 'readmcp',
+    author: 'agentprose',
     summary: 'Markup is noise to a language model. Clean markdown keeps headings, lists, code and links, and drops everything else.',
     body: `
 <p>A typical blog post weighs 60 to 150 KB of HTML. The words an agent needs are usually under 15 KB. Everything else — class names, inline SVG icons, tracking attributes — costs tokens and adds nothing.</p>
@@ -89,15 +89,15 @@ export const posts = [
     slug: 'search-without-a-server',
     title: 'Search without a server',
     date: '2026-10-15T09:00:00Z',
-    tags: ['search', 'readmcp', 'performance'],
+    tags: ['search', 'agentprose', 'performance'],
     category: 'Engineering',
-    author: 'readmcp',
-    summary: 'readmcp ranks posts in the browser with BM25F over titles, tags, summaries and text, and reuses Pagefind when a site already has it.',
+    author: 'agentprose',
+    summary: 'agentprose ranks posts in the browser with BM25F over titles, tags, summaries and text, and reuses Pagefind when a site already has it.',
     body: `
-<p>Static blogs have no search backend, so readmcp brings one: a BM25F ranker that weighs titles above tags, tags above summaries and summaries above body text.</p>
+<p>Static blogs have no search backend, so agentprose brings one: a BM25F ranker that weighs titles above tags, tags above summaries and summaries above body text.</p>
 <h2>Where the index comes from</h2>
 <ul>
-  <li>A prebuilt <code>readmcp.json</code> from the CLI, with one markdown file per post so the index stays small.</li>
+  <li>A prebuilt <code>agentprose.json</code> from the CLI, with one markdown file per post so the index stays small.</li>
   <li>Otherwise your feed, merged with every URL in <code>sitemap.xml</code> and the titles in <code>llms.txt</code>.</li>
   <li>If the site ships <a href="https://pagefind.app/">Pagefind</a>, its chunked index answers search directly.</li>
 </ul>
@@ -110,7 +110,7 @@ export const posts = [
     slug: 'headless-cms-tokens',
     title: 'Connecting a headless CMS: which tokens are safe in a page',
     date: '2026-10-16T09:00:00Z',
-    tags: ['cms', 'security', 'readmcp'],
+    tags: ['cms', 'security', 'agentprose'],
     category: 'Guides',
     author: 'Maxim Salnikov',
     summary: 'WebMCP tools run in the visitor’s browser, so every credential in their config is public. Here is what that allows for each CMS.',
@@ -127,7 +127,7 @@ export const posts = [
   <li><strong>Enonic XP</strong>: a public Guillotine endpoint.</li>
 </ul>
 <h2>When you need a secret</h2>
-<p>Use proxy mode: point the adapter at your own endpoint with <code>proxy</code>, and let the server add the credential. readmcp refuses to start with credentials that look like management keys.</p>
+<p>Use proxy mode: point the adapter at your own endpoint with <code>proxy</code>, and let the server add the credential. agentprose refuses to start with credentials that look like management keys.</p>
 <h2>Read-only by design</h2>
 <p>Every built-in tool carries <code>readOnlyHint</code> and <code>untrustedContentHint</code>, so agents know the tools change nothing and that post text is data, not instructions.</p>`,
   },
@@ -137,17 +137,17 @@ export const posts = [
     date: '2026-10-17T08:00:00Z',
     tags: ['analytics', 'agents'],
     category: 'Engineering',
-    author: 'readmcp',
+    author: 'agentprose',
     summary: 'Know which posts agents read and what they search for, without sending any content anywhere.',
     body: `
-<p>Agents do not show up in page-view analytics the way people do. readmcp reports every tool call, so you can see what agents actually use.</p>
+<p>Agents do not show up in page-view analytics the way people do. agentprose reports every tool call, so you can see what agents actually use.</p>
 <h2>The hook</h2>
-<pre><code class="language-js">import { createAgentTools } from 'readmcp';
+<pre><code class="language-js">import { createAgentTools } from 'agentprose';
 
 createAgentTools({
   onToolCall: ({ tool, ok, ms, page }) => console.log(tool, ok, ms, page),
 });</code></pre>
-<p>Each call also fires a <code>readmcp:call</code> DOM event, and <code>data-analytics</code> sends a beacon with the tool name, timing, page and search query.</p>
+<p>Each call also fires a <code>agentprose:call</code> DOM event, and <code>data-analytics</code> sends a beacon with the tool name, timing, page and search query.</p>
 <h2>What you learn</h2>
 <ul>
   <li>Which posts agents read in full, and which they skim by section.</li>

@@ -1,12 +1,12 @@
-# readmcp documentation
+# agentprose documentation
 
 - [Getting started](getting-started.md): install in one line, verify with the inspector
 - [Configuration](configuration.md): every `data-*` attribute and `createAgentTools()` option
 - [Tools](tools.md): the tool reference with input schemas and example outputs
 - [Adapters](adapters.md): WordPress, Ghost, Sanity, Contentful, Enonic, Strapi, Storyblok, custom; token safety and proxy mode
-- [CLI](cli.md): `readmcp build` for static sites, `readmcp inspect` for any URL
+- [CLI](cli.md): `agentprose build` for static sites, `agentprose inspect` for any URL
 - [Browser support](browser-support.md): native WebMCP, the origin trial, the polyfill, fallbacks
 - [Architecture](architecture.md): how discovery, lazy loading and registration work
 - [Security](security.md): threat model and guarantees
 - [Comparison](comparison.md): the existing landscape, with sources
-- [Business model](BUSINESS.md): how readmcp stays open source and sustainable
+- [Business model](BUSINESS.md): how agentprose stays open source and sustainable

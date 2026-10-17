@@ -3,10 +3,10 @@
 Use a proxy when the content needs a credential that must not reach the browser: a private Sanity dataset, a Strapi API token, a Contentful preview token on a staging site, and so on.
 
 ```html
-<script src=".../readmcp.min.js" defer data-adapter="sanity" data-project="abc123" data-proxy="https://cms-proxy.example.workers.dev"></script>
+<script src=".../agentprose.min.js" defer data-adapter="sanity" data-project="abc123" data-proxy="https://cms-proxy.example.workers.dev"></script>
 ```
 
-readmcp keeps the vendor path and query and swaps the origin for your proxy. The proxy:
+agentprose keeps the vendor path and query and swaps the origin for your proxy. The proxy:
 
 1. allow-lists read-only paths;
 2. adds the credential from its environment;

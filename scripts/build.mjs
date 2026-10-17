@@ -47,7 +47,7 @@ await Promise.all([
   ...adapters.map((a) =>
     build({
       ...common,
-      stdin: { contents: `import { fromAttributes } from './src/adapters/${a}.ts'; ((window.ReadMCP ||= { adapters: {} }).adapters ||= {})['${a}'] = fromAttributes;`, resolveDir: '.', loader: 'ts' },
+      stdin: { contents: `import { fromAttributes } from './src/adapters/${a}.ts'; ((window.AgentProse ||= { adapters: {} }).adapters ||= {})['${a}'] = fromAttributes;`, resolveDir: '.', loader: 'ts' },
       format: 'iife',
       outfile: `dist/adapters/${a}.min.js`,
     }),

@@ -1,4 +1,4 @@
-// Cloudflare Worker: read-only CMS proxy for readmcp (deploy as your Worker's main module).
+// Cloudflare Worker: read-only CMS proxy for agentprose (deploy as your Worker's main module).
 // Vars: UPSTREAM (e.g. https://abc123.api.sanity.io), TOKEN (secret), ALLOW_ORIGIN (e.g. https://example.com)
 const ALLOW = [/^\/v\d{4}-\d{2}-\d{2}\/data\/query\//, /^\/spaces\/[^/]+\/environments\/[^/]+\/entries$/, /^\/api\/[a-z0-9-]+$/, /^\/v2\/cdn\/(stories|tags)/];
 

@@ -4,9 +4,9 @@ import { mkdirSync, writeFileSync, copyFileSync, readdirSync, rmSync, existsSync
 import { join } from 'node:path';
 import { site, posts } from '../demo/posts.mjs';
 
-const BASE = (process.argv[2] || 'https://readmcp.sites.tab.bot/').replace(/\/?$/, '/');
+const BASE = (process.argv[2] || 'http://localhost:8080/').replace(/\/?$/, '/');
 const OUT = process.env.DEMO_OUT || 'demo/site';
-const REPO = 'https://github.com/vibeprogrammer/readmcp';
+const REPO = 'https://github.com/vibeprogrammer/agentprose';
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 
@@ -71,12 +71,12 @@ function layout({ title, description, path, body, head = '', inspector = '' }) {
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
 <style>${CSS}</style>
 ${head}
-<script src="/readmcp.min.js" defer data-subscribe="${BASE}feed.xml" data-inspector${inspector}></script>
+<script src="/agentprose.min.js" defer data-subscribe="${BASE}feed.xml" data-inspector${inspector}></script>
 </head>
 <body>
-<header class="site-header"><div class="wrap"><a class="logo" href="/">read<span>mcp</span></a><nav><a href="/">Posts</a><a href="/about/">About</a><a href="${REPO}">GitHub</a></nav></div></header>
+<header class="site-header"><div class="wrap"><a class="logo" href="/">agent<span>prose</span></a><nav><a href="/">Posts</a><a href="/about/">About</a><a href="${REPO}">GitHub</a></nav></div></header>
 ${body}
-<footer class="site-footer"><div class="wrap">A demo of <a href="${REPO}">readmcp</a>, MIT licensed. This page registers WebMCP tools with one script tag; open the 🔌 panel to call them.</div></footer>
+<footer class="site-footer"><div class="wrap">A demo of <a href="${REPO}">agentprose</a>, MIT licensed. This page registers WebMCP tools with one script tag; open the 🔌 panel to call them.</div></footer>
 </body>
 </html>`;
 }
@@ -84,7 +84,7 @@ ${body}
 const tagLinks = (tags) => `<div class="tags">${tags.map((t) => `<a href="/tags/${tagSlug(t)}/" rel="tag">${esc(t)}</a>`).join('')}</div>`;
 const card = (p) => `<article><h3><a href="/posts/${p.slug}/">${esc(p.title)}</a></h3><div class="meta"><time datetime="${p.date}">${fmt(p.date)}</time> · ${esc(p.author)}</div><p>${esc(p.summary)}</p>${tagLinks(p.tags)}</article>`;
 
-const SNIPPET = `<script src="https://cdn.jsdelivr.net/npm/readmcp@0.1/dist/readmcp.min.js" defer></script>`;
+const SNIPPET = `<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer></script>`;
 const home = layout({
   title: `${site.name} — agent-readable with one line`,
   description: site.description,
@@ -150,7 +150,7 @@ for (const t of tags) {
 }
 
 mkdirSync(join(OUT, 'about'), { recursive: true });
-writeFileSync(join(OUT, 'about', 'index.html'), layout({ title: `About · ${site.name}`, description: 'About this demo.', path: 'about/', body: `<main class="wrap"><h1 style="margin-top:32px">About</h1><p>This is the live demo of <a href="${REPO}">readmcp</a>. Every page loads one script tag. Agents in browsers with WebMCP see the tools natively; everyone else can call them from the 🔌 panel.</p><p>The posts double as the project's end-to-end test fixture.</p></main>` }));
+writeFileSync(join(OUT, 'about', 'index.html'), layout({ title: `About · ${site.name}`, description: 'About this demo.', path: 'about/', body: `<main class="wrap"><h1 style="margin-top:32px">About</h1><p>This is the live demo of <a href="${REPO}">agentprose</a>. Every page loads one script tag. Agents in browsers with WebMCP see the tools natively; everyone else can call them from the 🔌 panel.</p><p>The posts double as the project's end-to-end test fixture.</p></main>` }));
 
 // Feeds, sitemap, llms.txt
 const rss = `<?xml version="1.0" encoding="UTF-8"?>
@@ -163,14 +163,14 @@ writeFileSync(join(OUT, 'feed.json'), JSON.stringify({ version: 'https://jsonfee
 writeFileSync(join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n<url><loc>${BASE}</loc></url>\n${sorted.map((p) => `<url><loc>${BASE}posts/${p.slug}/</loc><lastmod>${p.date.slice(0, 10)}</lastmod></url>`).join('\n')}\n<url><loc>${BASE}about/</loc></url>\n${tags.map((t) => `<url><loc>${BASE}tags/${tagSlug(t)}/</loc></url>`).join('\n')}\n</urlset>\n`);
 writeFileSync(join(OUT, 'llms.txt'), `# ${site.name}\n\n> ${site.description}\n\n## Posts\n\n${sorted.map((p) => `- [${p.title}](${BASE}posts/${p.slug}/): ${p.summary}`).join('\n')}\n`);
 writeFileSync(join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${BASE}sitemap.xml\n`);
-writeFileSync(join(OUT, 'demo.js'), `document.addEventListener('click',async(e)=>{const c=e.target.closest('[data-copy]');if(c){await navigator.clipboard?.writeText(document.getElementById('snippet').firstChild.textContent);c.textContent='Copied';setTimeout(()=>c.textContent='Copy',1500)}if(e.target.closest('[data-open-inspector]')){const h=document.getElementById('readmcp-inspector');const p=h&&h.shadowRoot.querySelector('.panel');if(p){p.hidden=false;p.scrollIntoView?.({block:'end'})}else location.search='?readmcp-inspect'}});\n`);
+writeFileSync(join(OUT, 'demo.js'), `document.addEventListener('click',async(e)=>{const c=e.target.closest('[data-copy]');if(c){await navigator.clipboard?.writeText(document.getElementById('snippet').firstChild.textContent);c.textContent='Copied';setTimeout(()=>c.textContent='Copy',1500)}if(e.target.closest('[data-open-inspector]')){const h=document.getElementById('agentprose-inspector');const p=h&&h.shadowRoot.querySelector('.panel');if(p){p.hidden=false;p.scrollIntoView?.({block:'end'})}else location.search='?agentprose-inspect'}});\n`);
 
 writeFileSync(join(OUT, '404.html'), layout({ title: `Not found · ${site.name}`, description: 'Page not found', path: '404.html', body: '<main class="wrap"><h1 style="margin-top:32px">Not found</h1><p><a href="/">Back to the posts</a></p></main>' }));
 writeFileSync(join(OUT, 'tab-site.json'), JSON.stringify({ kind: 'static', worker: { html_handling: 'auto-trailing-slash', not_found_handling: '404-page' } }));
 
 // The library itself, served from the site root.
 if (existsSync('dist/adapters')) {
-  for (const f of readdirSync('dist').filter((f) => /^readmcp\..*js(\.map)?$/.test(f))) copyFileSync(join('dist', f), join(OUT, f));
+  for (const f of readdirSync('dist').filter((f) => /^agentprose\..*js(\.map)?$/.test(f))) copyFileSync(join('dist', f), join(OUT, f));
   mkdirSync(join(OUT, 'adapters'), { recursive: true });
   for (const f of readdirSync('dist/adapters')) copyFileSync(join('dist/adapters', f), join(OUT, 'adapters', f));
 } else console.warn('demo: dist/ not built yet — pages generated without the library (run npm run build first)');

@@ -12,7 +12,7 @@ Please **do not open a public issue**. Use GitHub's private vulnerability report
 
 In scope: the browser script and its lazily loaded files, the adapters, the CLI, the WordPress plugin, and the proxy examples.
 
-Especially interesting: ways to make readmcp fetch cross-origin, leak a credential, execute page content, change state through a read-only tool, or break the host page.
+Especially interesting: ways to make agentprose fetch cross-origin, leak a credential, execute page content, change state through a read-only tool, or break the host page.
 
 ## Design guarantees
 

@@ -8,7 +8,7 @@ Everything is optional.
 |---|---|---|
 | `data-content` | `.post-body` | CSS selector of the article body when detection picks the wrong element |
 | `data-ignore` | `.newsletter-box,.toc` | Extra selectors to strip from article content |
-| `data-index` | `/readmcp.json` | Prebuilt index URL. Default: `/readmcp.json` if it exists. `data-index=""` disables the probe. |
+| `data-index` | `/agentprose.json` | Prebuilt index URL. Default: `/agentprose.json` if it exists. `data-index=""` disables the probe. |
 | `data-feed` | `/index.xml` | Feed URL(s), comma-separated. Default: `<link rel=alternate>`, then common paths |
 | `data-sitemap` | `/sitemap_index.xml` or `false` | Sitemap URL, or `false` to skip |
 | `data-llms` | `/llms.txt` or `false` | llms.txt URL, or `false` to skip |
@@ -31,27 +31,27 @@ Everything is optional.
 | `data-exposed-to` | `https://partner.example` | Origins of other frames allowed to see the tools (WebMCP `exposedTo`) |
 | `data-polyfill` | (flag) or a URL | Load the MCP-B WebMCP polyfill when the browser has no `document.modelContext` |
 | `data-untrusted` | `false` | Turn off `untrustedContentHint` (only for fully trusted content) |
-| `data-inspector` | (flag) or `open` | Load the 🔌 inspector. Every page also accepts `?readmcp-inspect` |
+| `data-inspector` | (flag) or `open` | Load the 🔌 inspector. Every page also accepts `?agentprose-inspect` |
 | `data-debug` | (flag) | Log registration results to the console |
 
-For options that need code (callbacks, custom tools), set `window.ReadMCPConfig` before the script:
+For options that need code (callbacks, custom tools), set `window.AgentProseConfig` before the script:
 
 ```html
 <script>
-  window.ReadMCPConfig = {
+  window.AgentProseConfig = {
     onToolCall: (e) => console.log('agent used', e.tool),
     tools: [{ name: 'get_store_hours', description: 'Opening hours of our shop.', annotations: { readOnlyHint: true }, execute: () => ({ mon_fri: '9-17' }) }],
   };
 </script>
-<script src="https://cdn.jsdelivr.net/npm/readmcp@0.1/dist/readmcp.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer></script>
 ```
 
-`window.ReadMCP` exposes `version`, `instance` (`tools`, `call()`, `ready`, `destroy()`), `ready`, `create()` and `adapters`. The `readmcp:ready` event fires on `document` once tools are registered.
+`window.AgentProse` exposes `version`, `instance` (`tools`, `call()`, `ready`, `destroy()`), `ready`, `create()` and `adapters`. The `agentprose:ready` event fires on `document` once tools are registered.
 
 ## `createAgentTools(config)`
 
 ```ts
-import { createAgentTools, type Config } from 'readmcp';
+import { createAgentTools, type Config } from 'agentprose';
 ```
 
 | Option | Type | Default |
@@ -76,4 +76,4 @@ import { createAgentTools, type Config } from 'readmcp';
 
 The return value is `{ tools, call(name, input), source, ready, destroy() }`.
 
-`readmcp/full` also exports the engine pieces for custom builds and Node: `autoSource`, `SearchIndex`, `parseFeed`, `parseSitemap`, `parseLlmsTxt`, `extractPage`, `toMarkdown` and `toc`.
+`agentprose/full` also exports the engine pieces for custom builds and Node: `autoSource`, `SearchIndex`, `parseFeed`, `parseSitemap`, `parseLlmsTxt`, `extractPage`, `toMarkdown` and `toc`.

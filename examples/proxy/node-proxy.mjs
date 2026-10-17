@@ -1,4 +1,4 @@
-// Read-only CMS proxy for readmcp. Node 18+, no dependencies.
+// Read-only CMS proxy for agentprose. Node 18+, no dependencies.
 // UPSTREAM=https://cms.example.com TOKEN=... ALLOW_ORIGIN=https://example.com node node-proxy.mjs
 import { createServer } from 'node:http';
 
@@ -17,4 +17,4 @@ createServer(async (req, res) => {
   } catch (e) {
     res.writeHead(502, cors).end('upstream error');
   }
-}).listen(PORT, () => console.log(`readmcp proxy on :${PORT} → ${UPSTREAM}`));
+}).listen(PORT, () => console.log(`agentprose proxy on :${PORT} → ${UPSTREAM}`));

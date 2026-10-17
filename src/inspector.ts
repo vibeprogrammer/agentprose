@@ -1,8 +1,8 @@
 /**
- * readmcp inspector: a floating panel that lists the WebMCP tools on the page and runs them.
- * Loads with ?readmcp-inspect in the URL, data-inspector on the script tag, or this file directly.
+ * agentprose inspector: a floating panel that lists the WebMCP tools on the page and runs them.
+ * Loads with ?agentprose-inspect in the URL, data-inspector on the script tag, or this file directly.
  * Uses document.modelContext.getTools()/executeTool() when the browser has WebMCP, otherwise calls
- * readmcp's own tool registry, so it works in every browser.
+ * agentprose's own tool registry, so it works in every browser.
  */
 type Tool = { name: string; title?: string; description: string; inputSchema?: any; annotations?: any };
 
@@ -18,10 +18,10 @@ async function sourceOfTools(): Promise<{ mode: string; tools: Tool[]; run: (t: 
       /* fall through */
     }
   }
-  await w.ReadMCP?.ready;
-  const inst = w.ReadMCP?.instance;
+  await w.AgentProse?.ready;
+  const inst = w.AgentProse?.instance;
   return {
-    mode: mc ? 'WebMCP polyfill + readmcp registry' : 'This browser has no WebMCP yet; calling readmcp’s tools directly (same code an agent runs)',
+    mode: mc ? 'WebMCP polyfill + agentprose registry' : 'This browser has no WebMCP yet; calling agentprose’s tools directly (same code an agent runs)',
     tools: inst?.tools || [],
     run: (t, i) => inst.call(t.name, i),
   };
@@ -64,9 +64,9 @@ function esc(s: string): string {
 }
 
 export async function mount(open = false): Promise<void> {
-  if (document.getElementById('readmcp-inspector')) return;
+  if (document.getElementById('agentprose-inspector')) return;
   const host = document.createElement('div');
-  host.id = 'readmcp-inspector';
+  host.id = 'agentprose-inspector';
   const root = host.attachShadow({ mode: 'open' });
   document.body.appendChild(host);
   const src = await sourceOfTools();
@@ -111,7 +111,7 @@ export async function mount(open = false): Promise<void> {
   });
 }
 
-(w.ReadMCP ||= { adapters: {} }).inspect = mount;
+(w.AgentProse ||= { adapters: {} }).inspect = mount;
 // Opened automatically only where there is room for it beside the page.
 const auto = (document.currentScript as HTMLScriptElement | null)?.dataset.open !== undefined && matchMedia('(min-width: 1560px)').matches;
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => mount(auto));

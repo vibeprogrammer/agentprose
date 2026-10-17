@@ -1,2 +1,2 @@
 import { lib } from './core/lib';
-((window as any).ReadMCP ||= { adapters: {} }).lib = lib;
+((window as any).AgentProse ||= { adapters: {} }).lib = lib;

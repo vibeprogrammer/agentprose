@@ -1,5 +1,5 @@
 {
-  "name": "readmcp",
+  "name": "agentprose",
   "version": "0.1.0",
   "description": "Make any blog or CMS readable by AI agents through WebMCP \u2014 one script tag, zero config, read-only tools for articles, search, sections and citations.",
   "keywords": [
@@ -26,21 +26,21 @@
     "agent-readable"
   ],
   "license": "MIT",
-  "author": "Maxim Salnikov and readmcp contributors",
-  "homepage": "https://readmcp.sites.tab.bot/",
+  "author": "Maxim Salnikov and agentprose contributors",
+  "homepage": "https://vibeprogrammer.github.io/agentprose-demo/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vibeprogrammer/readmcp.git"
+    "url": "git+https://github.com/vibeprogrammer/agentprose.git"
   },
   "bugs": {
-    "url": "https://github.com/vibeprogrammer/readmcp/issues"
+    "url": "https://github.com/vibeprogrammer/agentprose/issues"
   },
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/types/index.d.ts",
-  "unpkg": "./dist/readmcp.min.js",
-  "jsdelivr": "./dist/readmcp.min.js",
+  "unpkg": "./dist/agentprose.min.js",
+  "jsdelivr": "./dist/agentprose.min.js",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
@@ -54,11 +54,11 @@
       "types": "./dist/types/adapters/*.d.ts",
       "import": "./dist/adapters/*.js"
     },
-    "./readmcp.min.js": "./dist/readmcp.min.js",
+    "./agentprose.min.js": "./dist/agentprose.min.js",
     "./package.json": "./package.json"
   },
   "bin": {
-    "readmcp": "./dist/cli.js"
+    "agentprose": "./dist/cli.js"
   },
   "files": [
     "dist",
@@ -68,7 +68,7 @@
     "CHANGELOG.md"
   ],
   "sideEffects": [
-    "./dist/readmcp*.min.js",
+    "./dist/agentprose*.min.js",
     "./dist/adapters/*.min.js"
   ],
   "engines": {

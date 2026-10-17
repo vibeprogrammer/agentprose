@@ -1,6 +1,6 @@
 # Security model
 
-**What readmcp is:** a script that registers read-only tools in the visitor's browser. It reads what the page and the site already serve publicly.
+**What agentprose is:** a script that registers read-only tools in the visitor's browser. It reads what the page and the site already serve publicly.
 
 | Risk | Mitigation |
 |---|---|
