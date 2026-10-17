@@ -20,6 +20,8 @@ readmcp turns the content your site already publishes into read-only [WebMCP](ht
 
 That's the whole install. readmcp needs no build step, no backend, no account and no configuration.
 
+![The readmcp demo blog with the inspector panel listing its WebMCP tools](docs/assets/demo.png)
+
 ## Why
 
 When an AI agent visits a blog today, it sees navigation, cookie banners and share buttons. Somewhere in the middle is the article. The agent has to guess where the content starts, spends tokens on markup, and has no reliable way to search the archive.

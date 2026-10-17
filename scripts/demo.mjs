@@ -169,8 +169,10 @@ writeFileSync(join(OUT, '404.html'), layout({ title: `Not found · ${site.name}`
 writeFileSync(join(OUT, 'tab-site.json'), JSON.stringify({ kind: 'static', worker: { html_handling: 'auto-trailing-slash', not_found_handling: '404-page' } }));
 
 // The library itself, served from the site root.
-for (const f of readdirSync('dist').filter((f) => /^readmcp\..*js(\.map)?$/.test(f))) copyFileSync(join('dist', f), join(OUT, f));
-mkdirSync(join(OUT, 'adapters'), { recursive: true });
-for (const f of readdirSync('dist/adapters')) copyFileSync(join('dist/adapters', f), join(OUT, 'adapters', f));
+if (existsSync('dist/adapters')) {
+  for (const f of readdirSync('dist').filter((f) => /^readmcp\..*js(\.map)?$/.test(f))) copyFileSync(join('dist', f), join(OUT, f));
+  mkdirSync(join(OUT, 'adapters'), { recursive: true });
+  for (const f of readdirSync('dist/adapters')) copyFileSync(join('dist/adapters', f), join(OUT, 'adapters', f));
+} else console.warn('demo: dist/ not built yet — pages generated without the library (run npm run build first)');
 if (existsSync('demo/og.png')) copyFileSync('demo/og.png', join(OUT, 'og.png'));
 console.log(`demo: ${posts.length} posts, ${tags.length} tags → ${OUT} (base ${BASE})`);
