@@ -16,17 +16,17 @@ A moving channel never mixes versions on one page: from 0.1.2 on, the core loads
 Pin when you need to review every change before it reaches your site, or want a Subresource Integrity hash on the tag itself:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1.2/dist/agentprose.min.js"
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1.3/dist/agentprose.min.js"
         integrity="sha384-…" crossorigin="anonymous" defer></script>
 ```
 
 Compute the hash from the exact file:
 
 ```bash
-curl -s https://cdn.jsdelivr.net/npm/agentprose@0.1.2/dist/agentprose.min.js | openssl dgst -sha384 -binary | openssl base64 -A
+curl -s https://cdn.jsdelivr.net/npm/agentprose@0.1.3/dist/agentprose.min.js | openssl dgst -sha384 -binary | openssl base64 -A
 ```
 
-On the Cloud, `/v/<exact version>/agentprose.min.js` (for example `/v/0.1.2/`) is immutable and stays available. Exact versions never change, so the hash stays valid; you update by changing the version and the hash together. The hash covers the core file. The files the core loads later (engine, adapters) come from the same immutable version folder, and the MCP-B polyfill carries its own hash ([security.md](security.md#the-mcp-b-polyfill)).
+On the Cloud, `/v/<exact version>/agentprose.min.js` (for example `/v/0.1.3/`) is immutable and stays available. Exact versions never change, so the hash stays valid; you update by changing the version and the hash together. The hash covers the core file. The files the core loads later (engine, adapters) come from the same immutable version folder, and the MCP-B polyfill carries its own hash ([security.md](security.md#the-mcp-b-polyfill)).
 
 ## Self-hosting
 
