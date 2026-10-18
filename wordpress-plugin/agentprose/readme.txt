@@ -1,10 +1,10 @@
 === agentprose ===
-Contributors: WPORG_USERNAME
+Contributors: maxious
 Tags: ai, webmcp, mcp, ai-agents, llm
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.1.0
+Stable tag: 0.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -39,7 +39,7 @@ The same library works on any site, not only WordPress (Ghost, Sanity, Contentfu
 
 = Source code =
 
-The JavaScript files in `js/` are built from the TypeScript source at [github.com/vibeprogrammer/agentprose](https://github.com/vibeprogrammer/agentprose) (MIT licence). To rebuild them: `npm ci && npm run build && node wordpress-plugin/build.mjs`. The bundled WebMCP polyfill in `js/vendor/` is [@mcp-b/webmcp-polyfill](https://github.com/WebMCP-org/npm-packages/tree/main/packages/webmcp-polyfill) 6.0.3 (MIT), unchanged.
+The JavaScript files in `js/` are the browser build of the [agentprose](https://www.npmjs.com/package/agentprose) npm release named in the changelog, unchanged. They are built from the TypeScript source at [github.com/vibeprogrammer/agentprose](https://github.com/vibeprogrammer/agentprose) (MIT licence); `npm ci && npm run build` rebuilds them, and `node wordpress-plugin/sync.mjs <version>` copies a release into the plugin. The bundled WebMCP polyfill in `js/vendor/` is [@mcp-b/webmcp-polyfill](https://github.com/WebMCP-org/npm-packages/tree/main/packages/webmcp-polyfill) 6.0.3 (MIT), unchanged.
 
 == External services ==
 
@@ -97,6 +97,10 @@ Both expose WordPress content to agents through WebMCP; they focus on different 
 
 If you run a shop or want a server-side MCP endpoint, WebMCP Bridge does that. If you publish articles and want agents to read and cite them accurately, use agentprose. They can run side by side; set a tool prefix to avoid duplicate names.
 
+= How does the plugin get updates? =
+
+Through normal WordPress plugin updates from WordPress.org. Each new version of the agentprose library ships as a new plugin version with the scripts included, and WordPress shows it under Dashboard → Updates. To get fixes without doing anything, turn on auto-updates for agentprose on the Plugins screen ("Enable auto-updates"). The plugin never downloads code from anywhere else.
+
 = Is it safe? =
 
 All tools are read-only and use only public data from your REST API: what any visitor can already read. Post content is marked as untrusted for the agent. The inspector is shown to administrators only.
@@ -108,10 +112,16 @@ All tools are read-only and use only public data from your REST API: what any vi
 
 == Changelog ==
 
+= 0.1.1 =
+* Bundles [agentprose 0.1.1](https://github.com/vibeprogrammer/agentprose/blob/main/CHANGELOG.md) and the MCP-B WebMCP polyfill 6.0.3, served from your site.
+
 = 0.1.0 =
 * First release on WordPress.org: read-only WebMCP tools for posts, pages and custom post types; settings page; bundled MCP-B WebMCP polyfill (served locally, can be switched off); optional agentprose Cloud (analytics and hosted search).
 
 == Upgrade Notice ==
+
+= 0.1.1 =
+Updates the bundled agentprose library to 0.1.1.
 
 = 0.1.0 =
 First release.

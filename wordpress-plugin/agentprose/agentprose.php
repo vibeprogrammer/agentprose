@@ -3,7 +3,7 @@
  * Plugin Name:       agentprose
  * Plugin URI:        https://github.com/vibeprogrammer/agentprose
  * Description:       Lets AI agents in the browser read, search and cite your posts through WebMCP. Read-only tools, runs in the visitor's browser, no account needed.
- * Version:           0.1.0
+ * Version:           0.1.1
  * Requires at least: 6.3
  * Requires PHP:      7.4
  * Author:            Maxim Salnikov
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AGENTPROSE_VERSION', '0.1.0' );
+define( 'AGENTPROSE_VERSION', '0.1.1' );
 define( 'AGENTPROSE_FILE', __FILE__ );
 
 /**

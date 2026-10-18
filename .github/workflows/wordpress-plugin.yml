@@ -15,6 +15,8 @@ jobs:
         working-directory: wordpress-plugin
     steps:
       - uses: actions/checkout@v4
+      - name: Plugin version, AGENTPROSE_VERSION and Stable tag agree
+        run: node sync.mjs --check
       - name: PHP lint (7.4+ syntax, runner PHP)
         run: for f in $(find agentprose -name '*.php'); do php -l "$f"; done
       - run: composer install --no-interaction --no-progress
