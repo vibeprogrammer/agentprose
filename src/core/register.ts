@@ -1,4 +1,5 @@
 import type { Config, ToolCallEvent, ToolDefinition } from './types';
+import { addScript } from './script';
 
 export type Mode = 'native' | 'legacy' | 'none';
 
@@ -115,16 +116,12 @@ export async function register(tools: ToolDefinition[], cfg: Config): Promise<Re
   return out;
 }
 
-/** Loads a polyfill script (opt-in) and resolves once document.modelContext exists or the script fails. */
+/** Loads a polyfill script and resolves once document.modelContext exists, the script fails, or 10 s pass. */
 export function loadPolyfill(src: string): Promise<boolean> {
   return new Promise((resolve) => {
     if ((document as any).modelContext) return resolve(true);
-    const s = document.createElement('script');
-    s.src = src;
-    s.async = true;
-    s.crossOrigin = 'anonymous';
-    s.onload = () => resolve(!!(document as any).modelContext);
-    s.onerror = () => resolve(false);
-    document.head.appendChild(s);
+    const done = () => resolve(!!(document as any).modelContext);
+    addScript(src, done);
+    setTimeout(done, 1e4);
   });
 }

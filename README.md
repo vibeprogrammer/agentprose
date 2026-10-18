@@ -150,11 +150,30 @@ A **private** dataset or token can't go in a page, because every visitor can rea
 | Environment | Behaviour |
 |---|---|
 | Chrome with `chrome://flags/#enable-webmcp-testing`, or the WebMCP origin trial | Native `document.modelContext`. Tested end-to-end in Chromium 156. |
-| Any browser + [MCP-B polyfill](https://www.npmjs.com/package/@mcp-b/webmcp-polyfill) (`data-polyfill`) | `document.modelContext` from the polyfill. Tested end-to-end. |
-| Older polyfills exposing `navigator.modelContext` | Used as a fallback (`legacy` mode). |
-| Everything else | Registers nothing, throws nothing, changes nothing. Tools stay callable via `window.AgentProse.instance.call()`. |
+| Any other browser | agentprose loads the pinned [MCP-B polyfill](https://www.npmjs.com/package/@mcp-b/webmcp-polyfill) (9 KB gzipped, from jsDelivr) **after the page has loaded**, and registers into its `document.modelContext`. Nothing is loaded when the page already has WebMCP. Tested end-to-end. `data-polyfill="off"` turns it off. |
+| Older polyfills exposing `navigator.modelContext` | Used as a fallback (`legacy` mode); no polyfill is loaded. |
+| Polyfill blocked (strict CSP, offline) or turned off | Registers nothing, throws nothing, changes nothing. Tools stay callable via `window.AgentProse.instance.call()`. |
 
 WebMCP runs only in secure contexts (HTTPS or localhost). Embedded frames need the `tools` Permissions Policy feature. agentprose registers tools with an `AbortSignal`, so `destroy()` removes them cleanly, and it never calls the removed `provideContext` or `unregisterTool`. See [docs/browser-support.md](docs/browser-support.md).
+
+## Works with MCP-B
+
+[MCP-B](https://docs.mcp-b.ai/) gives a page the WebMCP runtime. agentprose gives it something to say. The two fit together with no glue code:
+
+- **The polyfill is built in.** In browsers without WebMCP, agentprose loads `@mcp-b/webmcp-polyfill@6.0.3` once the page has loaded, so MCP-B's extension, relay and other clients find the tools through the standard `document.modelContext`. `data-polyfill="off"` opts out; `data-polyfill="/js/webmcp-polyfill.js"` self-hosts it (strict CSP).
+- **`@mcp-b/global` is detected.** If the page loads MCP-B's full runtime, agentprose registers into it and loads nothing extra.
+- **Your blog inside Claude Desktop, Cursor or Claude Code.** Add MCP-B's local relay embed next to agentprose, add the relay to your MCP client, and the agent can search, read and cite your posts from the tab you have open:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@mcp-b/webmcp-local-relay@6/dist/browser/embed.js" defer></script>
+```
+
+```json
+{ "mcpServers": { "webmcp-local-relay": { "command": "npx", "args": ["-y", "@mcp-b/webmcp-local-relay@latest"] } } }
+```
+
+Step by step, with what was verified: [docs/tutorials/mcp-b-claude-desktop.md](docs/tutorials/mcp-b-claude-desktop.md). A runnable check (a real MCP client, the relay and headless Chromium) is in [examples/mcp-b-desktop](examples/mcp-b-desktop/).
 
 ## Compared with what exists
 
@@ -170,7 +189,7 @@ The full landscape, with sources, is in [docs/comparison.md](docs/comparison.md)
 
 ## Performance & safety
 
-- **9.4 KB gzipped** core. It's deferred and doesn't touch layout. The core works with strict CSP: no `eval`, no inline code, and scripts load only from the script's own directory. The lazily loaded engine is 6.6 KB, and each adapter is 2–3 KB.
+- **9.4 KB gzipped** core. It's deferred and doesn't touch layout. The core works with strict CSP: no `eval`, no inline code, and scripts load only from the script's own directory, plus the MCP-B polyfill from jsDelivr after the load event in browsers without WebMCP (self-host it with `data-polyfill="/path.js"`, or `data-polyfill="off"`). The lazily loaded engine is 6.6 KB, and each adapter is 2–3 KB.
 - **Read-only.** The only tool that does anything is `navigate_to`, which is opt-in and same-origin only.
 - **Bounded output.** Answers are capped (`maxChars`, default 20,000) and continue with `offset`/`next_offset`. Indexes are capped (`maxPosts`, default 2,000).
 - **Same-origin only.** agentprose fetches only your own pages, feeds and sitemaps. It never acts as an open proxy.

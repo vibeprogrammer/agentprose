@@ -11,7 +11,8 @@ export { register, instrument, loadPolyfill } from './core/register';
 
 declare const __VERSION__: string;
 export const VERSION: string = typeof __VERSION__ === 'string' ? __VERSION__ : 'dev';
-export const POLYFILL_URL = 'https://unpkg.com/@mcp-b/webmcp-polyfill@6.0.3/dist/index.iife.js';
+/** The MCP-B WebMCP polyfill, pinned. Loaded only when a page has no WebMCP (see `polyfill`). */
+export const POLYFILL_URL = 'https://cdn.jsdelivr.net/npm/@mcp-b/webmcp-polyfill@6.0.3/dist/index.iife.js';
 
 export interface Instance {
   /** The tool definitions (instrumented). Usable without WebMCP: `await instance.call('search_posts', {query})`. */
@@ -42,7 +43,14 @@ export function createAgentTools(cfg: Config & { polyfill?: boolean | string; re
   let reg: Registration | undefined;
   const ready = (async () => {
     if (cfg.register === false) return { mode: 'none' as const, registered: [], failed: [], unregister() {} };
-    if (cfg.polyfill && !(document as any).modelContext) await loadPolyfill(typeof cfg.polyfill === 'string' ? cfg.polyfill : POLYFILL_URL);
+    const p = cfg.polyfill;
+    // Wait until the page has loaded, so a native API, @mcp-b/global or an extension can install
+    // first; then fill the gap with the MCP-B polyfill only if nothing did.
+    if (p) {
+      if (document.readyState != 'complete') await new Promise((r) => addEventListener('load', r, { once: true }));
+      // A string with a slash is a polyfill URL; true, "true" or "auto" mean the pinned MCP-B build.
+      if (!(navigator as any).modelContext) await loadPolyfill(/\//.test(p as string) ? (p as string) : POLYFILL_URL);
+    }
     reg = await register(tools, cfg);
     return reg;
   })();

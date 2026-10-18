@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hello from my blog · agentprose + MCP-B</title>
+<meta name="description" content="A one-page blog that Claude Desktop or Cursor can read through agentprose and the MCP-B local relay.">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-10-18T09:00:00Z">
+<!-- Optional: MCP-B's full runtime. Without it, agentprose loads the smaller MCP-B polyfill by itself. -->
+<script src="https://cdn.jsdelivr.net/npm/@mcp-b/global@6.0.3/dist/index.iife.js"></script>
+<!-- The content tools: search, posts, sections, citations. -->
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer></script>
+<!-- Connects this tab's tools to the relay your MCP client started on localhost. -->
+<script src="https://cdn.jsdelivr.net/npm/@mcp-b/webmcp-local-relay@6.0.3/dist/browser/embed.js" defer></script>
+<style>body{font:17px/1.6 system-ui,sans-serif;max-width:680px;margin:40px auto;padding:0 20px;color:#111}code{background:#f3f4f6;padding:2px 4px;border-radius:4px}</style>
+</head>
+<body>
+<article>
+<h1>Hello from my blog</h1>
+<p><time datetime="2026-10-18">18 October 2026</time> · Me</p>
+<p>This page has no tool code of its own. agentprose turns the article you are reading into WebMCP tools, and MCP-B's relay hands them to the agent on your desktop.</p>
+<h2>Try it</h2>
+<p>With the relay in your MCP client's config and this page open, ask the agent: “What does the post in my browser say about the relay? Quote it.”</p>
+<h2>What the agent can call</h2>
+<p><code>get_current_article</code>, <code>get_section</code>, <code>get_table_of_contents</code>, <code>search_posts</code>, <code>list_posts</code>, <code>get_post</code>, <code>get_related_posts</code>, <code>get_citation</code>, <code>get_site_info</code> and more. All read-only.</p>
+</article>
+</body>
+</html>

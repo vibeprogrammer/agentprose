@@ -8,6 +8,7 @@ import type { Config, ContentAdapter } from './core/types';
 import { extractPage, extractSite } from './core/extract';
 import { toMarkdown } from './core/markdown';
 import { cloudBase } from './core/cloud';
+import { addScript } from './core/script';
 
 type Factory = (o: Record<string, string>) => ContentAdapter;
 interface Global {
@@ -54,7 +55,8 @@ function configFrom(d: DOMStringMap): Config & { polyfill?: boolean | string } {
     pagefind: off(d.pagefind) as any,
     untrustedContent: d.untrusted === 'false' ? false : undefined,
     links: { subscribe: d.subscribe, comments: d.comments, about: d.about, contact: d.contact },
-    polyfill: d.polyfill === '' || d.polyfill === 'true' ? true : d.polyfill && d.polyfill !== 'false' ? d.polyfill : undefined,
+    // The MCP-B polyfill is on by default (it loads only if the page has no WebMCP); "off" disables it.
+    polyfill: off(d.polyfill) ?? true,
     debug: d.debug !== undefined && d.debug !== 'false',
     baseUrl: d.base,
   };
@@ -63,14 +65,7 @@ function configFrom(d: DOMStringMap): Config & { polyfill?: boolean | string } {
 function loadAdapter(name: string): Promise<Factory | undefined> {
   if (g.adapters[name]) return Promise.resolve(g.adapters[name]);
   if (!script?.src || !/^[a-z0-9-]+$/.test(name)) return Promise.resolve(undefined);
-  return new Promise((resolve) => {
-    const s = document.createElement('script');
-    s.src = new URL(`adapters/${name}.min.js`, script.src).href;
-    s.async = true;
-    s.onload = () => resolve(g.adapters[name]);
-    s.onerror = () => resolve(undefined);
-    document.head.appendChild(s);
-  });
+  return new Promise((resolve) => addScript(new URL(`adapters/${name}.min.js`, script.src).href, () => resolve(g.adapters[name])));
 }
 
 async function start(): Promise<Instance | undefined> {
@@ -89,10 +84,8 @@ async function start(): Promise<Instance | undefined> {
     await g.instance.ready;
     document.dispatchEvent(new CustomEvent('agentprose:ready', { detail: g.instance }));
     if (d.inspector !== undefined || /[?&]agentprose-inspect/.test(location.search)) {
-      const s = document.createElement('script');
-      s.src = new URL('agentprose.inspector.min.js', script?.src || location.href).href;
+      const s = addScript(new URL('agentprose.inspector.min.js', script?.src || location.href).href);
       if (d.inspector === 'open' || /[?&]agentprose-inspect/.test(location.search)) s.dataset.open = '';
-      document.head.appendChild(s);
     }
     return g.instance;
   } catch (e) {
