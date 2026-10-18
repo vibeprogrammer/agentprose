@@ -4,6 +4,7 @@ import { DOMParser as LinkeDOMParser } from 'linkedom';
 import { extractPage, extractSite } from '../core/extract';
 import { autoSource } from '../core/source';
 import { stripHtml } from '../core/util';
+import { cleanContact, cleanText } from '../core/owner';
 
 // The core runs on web APIs; linkedom provides DOMParser in Node.
 (globalThis as any).DOMParser ||= LinkeDOMParser;
@@ -27,6 +28,9 @@ build options:
   --inline            Put full markdown inside agentprose.json (small sites) instead of one .md per post
   --llms              Also write llms.txt (skipped if one exists)
   --content <sel>     CSS selector of the article body, if auto-detection picks the wrong element
+  --site <file.json>  Site details to publish in agentprose.json: name, description, links,
+                      agentNotes (your notes for AI agents) and contact {email, phone, url,
+                      booking, hours, address}. See docs/configuration.md.
 
 Works with the output folder of Hugo (public/), Jekyll (_site/), Astro (dist/), Eleventy (_site/),
 Next.js static export (out/), Gatsby (public/), Docusaurus (build/) and any other generator.`;
@@ -94,6 +98,7 @@ export async function build(dir: string, o: Record<string, string | boolean>) {
     posts.push(rec);
   }
   posts.sort((a, b) => (b.published || '').localeCompare(a.published || ''));
+  if (o.site) Object.assign(site, siteFile(String(o.site)));
   const index = { version: 1, generator: `agentprose ${VERSION}`, generated: new Date().toISOString(), site: { ...site, url: base }, posts };
   mkdirSync(outDir, { recursive: true });
   const json = JSON.stringify(index);
@@ -103,6 +108,27 @@ export async function build(dir: string, o: Record<string, string | boolean>) {
     writeFileSync(join(outDir, 'llms.txt'), lines.filter((l, i) => l || lines[i - 1]).join('\n') + '\n');
   }
   return { pages: files.length, posts: posts.length, bytes: json.length };
+}
+
+/** Owner-written site details from --site: only known fields, cleaned the same way the browser cleans them. */
+export function siteFile(path: string): Record<string, unknown> {
+  let j: any;
+  try {
+    j = JSON.parse(readFileSync(path, 'utf8'));
+  } catch (e) {
+    throw new Error(`--site ${path}: ${(e as Error).message}`);
+  }
+  const out: Record<string, unknown> = {};
+  for (const k of ['name', 'description', 'lang', 'logo'] as const) if (cleanText(j?.[k], 500)) out[k] = cleanText(j[k], 500);
+  if (j?.links && typeof j.links === 'object')
+    out.links = Object.fromEntries(Object.entries(j.links).filter(([, v]) => typeof v === 'string' && /^https?:\/\//i.test(v)));
+  const notes = cleanText(j?.agentNotes, 2000);
+  if (notes) out.agentNotes = notes;
+  if (typeof j?.agentNotes === 'string' && j.agentNotes.trim().length > 2000) console.warn(`agentprose: agentNotes is cut to 2000 characters`);
+  const contact = cleanContact(j?.contact);
+  if (contact) out.contact = contact;
+  for (const k of Object.keys(j?.contact || {})) if (!contact || !(k in contact)) console.warn(`agentprose: contact.${k} was left out (unknown field, empty, or not a valid value)`);
+  return out;
 }
 
 export async function inspect(url: string) {
@@ -138,6 +164,10 @@ async function main() {
     const t0 = Date.now();
     const r = await build(target, o);
     console.log(`agentprose: indexed ${r.posts} posts from ${r.pages} HTML pages → ${join(String(o.out || target), 'agentprose.json')} (${(r.bytes / 1024).toFixed(1)} KB) in ${Date.now() - t0} ms`);
+    if (o.out)
+      console.log(
+        `agentprose: if agentprose.json is not served at ${String(o['base-url']).replace(/\/?$/, '/')}agentprose.json, point to it from your pages' <head>:\n  <link rel="agentprose-index" href="/path/to/agentprose.json">`,
+      );
     return;
   }
   if (cmd === 'inspect') {

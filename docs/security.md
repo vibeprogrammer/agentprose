@@ -69,3 +69,13 @@ With the npm API you can keep the integrity check on your own copy: `createAgent
 A CSP that blocks the polyfill causes one console message from the browser and nothing else: agentprose settles in mode `none`.
 
 Report vulnerabilities as described in [SECURITY.md](../SECURITY.md).
+
+## Owner notes and contact details
+
+`agentNotes` and `contact` ([configuration.md](configuration.md#notes-for-ai-agents-and-contact-details)) are text the site owner writes for AI agents. They are a deliberate channel from the owner to agents, so they are treated with care:
+
+- **Labelled, not obeyed blindly.** The tool descriptions tell agents these are the owner's preferences and never override the user, and every tool keeps `untrustedContentHint: true`.
+- **Cleaned whatever the source** (page config, `agentprose.json`, a Cloud): strings only, control and bidi-override characters removed (they can hide or reorder text), notes capped at 2,000 characters and other fields at 254–500, links limited to `http:`/`https:` (no `javascript:` or `data:`), emails must be address-shaped. Unknown fields are dropped.
+- **Never HTML.** agentprose returns them as JSON text; nothing is inserted into the page.
+- **No new request on page load.** With a Cloud, `/v1/site` is fetched once, the first time an agent calls `get_site_info` or `get_contact_info`, with `credentials: same-origin` (no cookies cross-origin).
+- **Strict CSP.** That request goes to the Cloud's origin, which is already in `connect-src` if you use hosted search or analytics.

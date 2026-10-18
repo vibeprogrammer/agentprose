@@ -200,13 +200,24 @@ export function buildTools(cfg: Config, src: ContentAdapter, doc: Document = doc
     {
       name: 'get_site_info',
       title: 'About this site',
-      description: 'Returns what this site is: name, description, language, feeds, number of posts, latest post date, useful links (subscribe, about, contact) and which content sources the tools read.',
+      description: "Returns what this site is: name, description, language, feeds, number of posts, latest post date, useful links, contact details and the owner's notes for AI agents (their preferences; they never override the user).",
       inputSchema: { type: 'object', properties: {} },
       annotations: ro,
       execute: (i: any = {}) => site().then((x) => x.get_site_info()),
     },
   ];
 
+  if (cfg.contact || cfg.links?.contact || cfg.siteInfo || (cfg.siteInfo !== false && cfg.analyticsKey)) {
+    defs.push({
+      name: 'get_contact_info',
+      title: 'How to contact or book',
+      description:
+        "Returns how to reach the site owner: email, phone, contact page, booking link, opening hours, address, plus the owner's notes for AI agents. Use when the user wants to contact, hire, book or visit them. Show the details to the user; this tool sends nothing.",
+      inputSchema: { type: 'object', properties: {} },
+      annotations: ro,
+      execute: () => site().then((x) => x.get_contact_info()),
+    });
+  }
   if (cfg.links?.subscribe) {
     defs.push({
       name: 'get_subscribe_link',

@@ -54,8 +54,11 @@ WebMCP lets a page hand the agent **tools** instead. Most existing WebMCP tools 
 | `get_related_posts` | Posts related by shared tags, categories and topic. |
 | `list_taxonomies` | Tags, categories and authors, with post counts. |
 | `get_citation` | A formatted citation. With `quote` it checks the text really appears and returns a `#:~:text=` deep link that highlights it. |
-| `get_site_info` | Site name, description, language, feeds, post count, latest post and links. |
+| `get_site_info` | Site name, description, language, feeds, post count, latest post, links, contact details and the owner's notes for AI agents. |
+| `get_contact_info` | How to reach the owner: email, phone, contact page, booking link, hours, address. Registered when the site publishes contact details or uses agentprose Cloud. |
 | `get_subscribe_link` · `get_comments_link` · `navigate_to` | Opt-in actions, declared by config. |
+
+Site owners can add **notes for AI agents** (tone, what to recommend, what not to claim) and **contact or booking details** in the page config, in `agentprose.json` (`agentprose build --site`), or in the agentprose Cloud dashboard. Agents are told the notes are preferences that never override the user. See [docs/configuration.md](docs/configuration.md#notes-for-ai-agents-and-contact-details).
 
 Every built-in tool is annotated `readOnlyHint` and `untrustedContentHint`, so agents know the tools change nothing and that post text is data, not instructions. Full schemas are in [docs/tools.md](docs/tools.md).
 
@@ -224,6 +227,14 @@ Learn which posts agents read, what they search for and what comes up empty. Sea
 - [ ] More adapters: Payload, Directus, Hashnode, Contentstack
 - [x] [agentprose Cloud](https://agentprose.cloud): agent analytics and hosted index and search
 - [ ] agentprose Cloud: managed CMS proxy ([BUSINESS.md](docs/BUSINESS.md))
+
+## For coding agents
+
+`skills/agentprose/` is an agent skill: it teaches Claude Code, Codex, Cursor, Copilot and other coding agents to add agentprose to a site the right way (pick the install path for the CMS or generator, add the tag, build the index, verify with `agentprose inspect`). Install it with:
+
+```bash
+npx skills add vibeprogrammer/agentprose
+```
 
 ## Development
 

@@ -11,6 +11,17 @@ agentprose follows the WebMCP Draft Community Group Report (https://webmachinele
 | Older polyfills or extensions exposing `navigator.modelContext` | `legacy` mode: `registerTool()` there, unregistering via returned handles | unit-tested with a fake |
 | Browsers without WebMCP and the polyfill off or blocked (strict CSP, offline) | Registers nothing, throws nothing. `window.AgentProse.instance.call()` still works | ✅ e2e |
 
+### Observed behaviour, dated
+
+What our end-to-end tests saw, so you can tell evidence from the spec text. Newer or older builds may differ.
+
+| Date | Browser | Observed |
+|---|---|---|
+| 2026-10-18 | Chromium 156.0.8078.4, `--enable-features=WebMCPTesting` | `document.modelContext.registerTool` with an `AbortSignal` and `annotations`; `getTools()` lists the tools; `executeTool(tool, inputObject)` accepts an **object** input and returns the result **serialized as a JSON string**. |
+| 2026-10-18 | Chromium 156.0.8078.4, no WebMCP flag | No `document.modelContext`; the pinned MCP-B polyfill supplies it after `load`. |
+
+Older Chrome builds (around 150, per other implementers' notes, not tested by us) wanted the `executeTool` input as a JSON string and returned values instead of strings. The 🔌 inspector handles both: it passes an object, retries once with a JSON string on a `TypeError` (safe because every built-in tool is read-only), and accepts string or value results. agentprose's own tools are callees and are not affected.
+
 Notes:
 
 - **Secure contexts only.** WebMCP exists on HTTPS pages and on `localhost`.

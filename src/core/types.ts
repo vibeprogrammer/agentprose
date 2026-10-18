@@ -32,6 +32,20 @@ export interface Post extends PostSummary {
   html?: string;
 }
 
+/** How to reach the site owner. Owner-provided; agentprose cleans and caps every field. */
+export interface Contact {
+  email?: string;
+  phone?: string;
+  /** A contact page or form (http/https). */
+  url?: string;
+  /** A booking or appointment page (http/https). */
+  booking?: string;
+  /** Opening hours, plain text, e.g. "Mon–Fri 9–17 CET". */
+  hours?: string;
+  /** Postal or visiting address, plain text. */
+  address?: string;
+}
+
 export interface SiteInfo {
   name?: string;
   description?: string;
@@ -44,6 +58,10 @@ export interface SiteInfo {
   generator?: string;
   /** Free-form links (subscribe, comments, about, contact) declared in config. */
   links?: Record<string, string>;
+  /** The owner's notes for AI agents (tone, what to recommend, what not to claim), plain text. */
+  notesForAgents?: string;
+  /** How to reach the owner. */
+  contact?: Contact;
 }
 
 export interface ListOptions {
@@ -138,6 +156,19 @@ export interface Config {
   tools?: ToolDefinition[];
   /** Links exposed through get_site_info and the action tools. */
   links?: { subscribe?: string; comments?: string; contact?: string; about?: string; [k: string]: string | undefined };
+  /**
+   * Notes for AI agents, written by the site owner: tone, what to recommend, what not to claim, how to get
+   * in touch. Plain text, at most 2000 characters. Returned by get_site_info and get_contact_info.
+   * Also read from agentprose.json (site.agentNotes) and from an agentprose Cloud.
+   */
+  agentNotes?: string;
+  /** Contact and booking details for agents (get_contact_info). Also read from agentprose.json (site.contact) and a Cloud. */
+  contact?: Contact;
+  /**
+   * URL of a JSON document { agentNotes?, contact? } fetched when an agent first asks for site or contact
+   * info (never on page load). Defaults to the Cloud's /v1/site when data-key/data-cloud is used; false disables.
+   */
+  siteInfo?: string | false;
   /** Max characters of markdown per response (agents page with offset). Default 20000. */
   maxChars?: number;
   /** Max posts held in the client-side index. Default 2000. */

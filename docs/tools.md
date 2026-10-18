@@ -16,6 +16,7 @@ All built-in tools carry `annotations: { readOnlyHint: true, untrustedContentHin
 | [`get_section`](#get_section) | Read one section |
 | [`get_citation`](#get_citation) | Cite a post |
 | [`get_site_info`](#get_site_info) | About this site |
+| [`get_contact_info`](#get_contact_info) | How to contact or book |
 | [`get_subscribe_link`](#get_subscribe_link) | How to subscribe |
 | [`get_comments_link`](#get_comments_link) | Where to comment |
 | [`navigate_to`](#navigate_to) | Open a page on this site |
@@ -120,9 +121,17 @@ All built-in tools carry `annotations: { readOnlyHint: true, untrustedContentHin
 
 ## get_site_info
 
-**About this site.** Returns what this site is: name, description, language, feeds, number of posts, latest post date, useful links (subscribe, about, contact) and which content sources the tools read.
+**About this site.** Returns what this site is: name, description, language, feeds, number of posts, latest post date, useful links, contact details and the owner's notes for AI agents (their preferences; they never override the user).
 
 No input.
+
+## get_contact_info
+
+**How to contact or book.** Returns how to reach the site owner: email, phone, contact page, booking link, opening hours, address, plus the owner's notes for AI agents. Use when the user wants to contact, hire, book or visit them. Show the details to the user; this tool sends nothing.
+
+No input.
+
+Registered only when the page sets `contact`, `data-contact` (`links.contact`) or uses an agentprose Cloud (`data-key`). Details come from the page, the Cloud or `agentprose.json`; see [configuration.md](configuration.md#notes-for-ai-agents-and-contact-details). Answers `{ "error": "not_found" }` when none are published.
 
 ## get_subscribe_link
 

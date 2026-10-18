@@ -4,7 +4,7 @@ import { writeFileSync } from 'node:fs';
 const { document, DOMParser } = parseHTML('<!doctype html><html><head></head><body></body></html>');
 Object.assign(globalThis, { document, DOMParser, location: new URL('https://example.com/') });
 const { buildTools } = await import('../dist/index.js');
-const tools = buildTools({ links: { subscribe: 'x', comments: 'y' }, navigate: true }, { name: 'x', list: async () => ({ items: [] }), get: async () => null }, document);
+const tools = buildTools({ links: { subscribe: 'x', comments: 'y' }, contact: { email: 'a@b.co' }, navigate: true }, { name: 'x', list: async () => ({ items: [] }), get: async () => null }, document);
 
 const row = (k, s, req) => `| \`${k}\`${req ? ' *' : ''} | ${s.type}${s.enum ? ` (${s.enum.join(' \\| ')})` : ''}${s.minimum !== undefined ? ` ${s.minimum}–${s.maximum ?? '∞'}` : ''} | ${(s.description || '').replace(/\|/g, '\\|')} |`;
 let md = `# Tools
@@ -24,6 +24,7 @@ for (const t of tools) {
   md += `## ${t.name}\n\n**${t.title}.** ${t.description}\n\n`;
   md += Object.keys(p).length ? `| Input | Type | Description |\n|---|---|---|\n${Object.entries(p).map(([k, s]) => row(k, s, req.includes(k))).join('\n')}\n\n` : 'No input.\n\n';
   if (['get_subscribe_link', 'get_comments_link'].includes(t.name)) md += `Registered only when \`links.${t.name === 'get_subscribe_link' ? 'subscribe' : 'comments'}\` (\`data-${t.name === 'get_subscribe_link' ? 'subscribe' : 'comments'}\`) is set.\n\n`;
+  if (t.name === 'get_contact_info') md += 'Registered only when the page sets `contact`, `data-contact` (`links.contact`) or uses an agentprose Cloud (`data-key`). Details come from the page, the Cloud or `agentprose.json`; see [configuration.md](configuration.md#notes-for-ai-agents-and-contact-details). Answers `{ "error": "not_found" }` when none are published.\n\n';
   if (t.name === 'navigate_to') md += 'Registered only with `navigate: true` (`data-navigate`). Same-origin URLs only. Not read-only.\n\n';
 }
 md += `## Example: get_current_article

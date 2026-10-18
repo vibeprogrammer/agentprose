@@ -4,6 +4,21 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added
+- **Notes for AI agents** (`agentNotes`) and **contact details** (`contact`: `email`, `phone`, `url`, `booking`, `hours`, `address`), written by the site owner. Agents get them from `get_site_info` (`notesForAgents`, `contact`) and from a new read-only tool, **`get_contact_info`**, which is registered when the page sets `contact`, `data-contact`, or uses agentprose Cloud (`data-key`). Sources, highest priority first: page config, agentprose Cloud (`/v1/site`, fetched only when an agent first asks, never on page load; `siteInfo` overrides or disables it), `agentprose.json` (`site.agentNotes`, `site.contact`). Everything is cleaned and capped, and links must be http(s). See docs/configuration.md.
+- `agentprose build --site <file.json>` publishes `name`, `description`, `lang`, `logo`, `links`, `agentNotes` and `contact` in `agentprose.json`, and warns about every field it leaves out. With `--out`, the CLI prints the `<link rel="agentprose-index">` tag to add.
+- `skills/agentprose/SKILL.md`: an agent skill that teaches coding agents to install agentprose correctly (`npx skills add vibeprogrammer/agentprose`).
+
+### Changed
+- The 🔌 inspector passes object input to the browser's `executeTool`, retries once with a JSON string on a `TypeError` (older Chrome builds), and accepts both string and value results.
+- Size budget: core + engine raised from 16,640 B to 17,408 B gzipped (+768 B) for owner details and `get_contact_info`. The core stays under 10,240 B.
+
+### Docs
+- `<link rel="agentprose-index">` (already supported) is now documented, with a section on owner notes and contact details, a security note on owner-written text, dated browser evidence, and docs/roadmap/2026-10-ideas.md.
+
+### Tests
+- A contract test calls every built-in tool with empty and malformed input and asserts it returns a JSON object and never `null`, `undefined` or a throw. Unit tests cover cleaning, precedence and the Cloud fetch; an e2e test shows the Cloud details load only when an agent asks.
+
 ## [0.1.2] - 2026-10-18
 
 ### Security
