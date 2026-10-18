@@ -8,7 +8,7 @@ Put this in your site's `<head>` (or before `</body>`):
 <script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer></script>
 ```
 
-Pin a version in production (`agentprose@0.1.0`). To self-host, copy `agentprose.min.js`, `agentprose.index.min.js`, `agentprose.inspector.min.js` and the `adapters/` folder from `node_modules/agentprose/dist/` into one directory. The core loads its other files from the directory it was served from.
+Pin a version in production (`agentprose@0.1.1`). To self-host, copy `agentprose.min.js`, `agentprose.index.min.js`, `agentprose.inspector.min.js` and the `adapters/` folder from `node_modules/agentprose/dist/` into one directory. The core loads its other files from the directory it was served from.
 
 Where to put it:
 
