@@ -17,12 +17,6 @@ const PAGE = `<!doctype html><html lang="nb"><head>
 </body></html>`;
 
 describe('extractPage', () => {
-  it('finds the author in WordPress block and classic theme markup', () => {
-    const block = extractPage(html('<html><body><main><article><h1>T</h1><div class="wp-block-post-author-name"><a href="/author/maria/">Maria Lind</a></div><div class="entry-content"><p>Body</p></div></article></main></body></html>'), 'https://wp.ex/t/');
-    expect(block.authors).toEqual(['Maria Lind']);
-    const classic = extractPage(html('<html><body><article><h1>T</h1><span class="byline">by <span class="author vcard"><a class="url fn n" href="/author/ola/">Ola</a></span></span><div class="entry-content"><p>Body</p></div></article></body></html>'), 'https://wp.ex/t/');
-    expect(classic.authors).toEqual(['Ola']);
-  });
   const p = extractPage(html(PAGE), 'https://ex.com/posts/hello/?utm=1');
   it('reads JSON-LD through @graph and tolerates broken blocks', () => {
     expect(jsonLd(html(PAGE)).length).toBe(3);

@@ -53,19 +53,8 @@ export function readingMinutes(text: string): number {
   return Math.max(1, Math.round(words(text) / 230));
 }
 
-const NAMED: Record<string, string> = { nbsp: ' ', amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", hellip: '…', ndash: '–', mdash: '—', lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”', laquo: '«', raquo: '»', copy: '©', reg: '®', trade: '™', times: '×', middot: '·', bull: '•' };
-
-/** Decodes numeric entities and the named ones CMSs emit (WordPress renders titles with &#8217; and excerpts with [&hellip;]). */
-export function decodeEntities(s: string): string {
-  return s.replace(/&(#x[0-9a-f]{1,6}|#[0-9]{1,7}|[a-z]{2,8});/gi, (m, e: string) => {
-    if (e[0] !== '#') return NAMED[e.toLowerCase()] ?? m;
-    const n = e[1] === 'x' || e[1] === 'X' ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10);
-    return n > 0 && n <= 0x10ffff && !(n >= 0xd800 && n <= 0xdfff) ? String.fromCodePoint(n === 160 ? 32 : n) : m;
-  });
-}
-
 export function stripHtml(h: string): string {
-  return clean(decodeEntities(h.replace(/<(script|style)[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]+>/g, ' ')));
+  return clean(h.replace(/<(script|style)[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#0?39;|&apos;/g, "'"));
 }
 
 export function parseHtml(h: string): Document {

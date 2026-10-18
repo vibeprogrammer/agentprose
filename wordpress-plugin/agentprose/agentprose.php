@@ -43,7 +43,7 @@ function agentprose_defaults() {
 		'subscribe'    => '',
 		'navigate'     => 0,
 		'inspector'    => 1,
-		'polyfill'     => 0,
+		'polyfill'     => 1,
 		'cloud_key'    => '',
 		'cloud_search' => 1,
 		'analytics'    => '',

@@ -30,7 +30,7 @@ How it works:
 * The script loads deferred (about 9 KB gzipped) and does nothing until an agent calls a tool.
 * The tools read this site's public WordPress REST API from the visitor's browser. No new endpoints, no database tables, no server load until an agent asks.
 * Every tool is read-only and marks post content as untrusted, so agents treat it as data, not as instructions.
-* Browsers without WebMCP simply ignore it. Optionally, the plugin can serve the bundled WebMCP polyfill so agents that rely on it (for example the MCP-B browser extension) can see the tools.
+* In browsers without built-in WebMCP, the plugin loads the bundled [MCP-B](https://docs.mcp-b.ai/) WebMCP polyfill from your own site after the page has loaded, so agents that use it (for example the MCP-B browser extension) can see the tools. You can switch this off.
 * Administrators get a small 🔌 inspector on the front end to list and try every tool.
 
 The same library works on any site, not only WordPress (Ghost, Sanity, Contentful, Strapi, Storyblok, Enonic, static sites): see [the agentprose repository](https://github.com/vibeprogrammer/agentprose).
@@ -57,13 +57,13 @@ Like any web request, these requests reveal the visitor's IP address to the serv
 
 You can also send the same per-call message to an endpoint of your own instead ("Own analytics endpoint"); then that endpoint is the only place it goes.
 
-The plugin does not load anything from CDNs: all scripts, including the optional polyfill, are served from your site.
+The plugin does not load anything from CDNs: all scripts, including the WebMCP polyfill, are served from your site.
 
 == Installation ==
 
 1. Install from Plugins → Add New (search for "agentprose"), or upload the zip under Plugins → Add New → Upload Plugin.
 2. Activate it. The tools are live on every front-end page.
-3. Optional: Settings → agentprose to choose post types, a subscribe URL, a tool prefix, the polyfill, or agentprose Cloud.
+3. Optional: Settings → agentprose to choose post types, a subscribe URL, a tool prefix, switch off the polyfill, or connect agentprose Cloud.
 4. As an administrator, open any post and click 🔌 to list and run the tools.
 
 == Frequently Asked Questions ==
@@ -74,7 +74,7 @@ No. The tools run in the visitor's browser and read your own public REST API. On
 
 = Which browsers and agents support WebMCP? =
 
-WebMCP is a draft. Chrome supports it behind a flag and an origin trial, and some AI browsers and extensions support it or use the polyfill. Browsers without it ignore the script, so there is no downside to installing early.
+WebMCP is a draft. Chrome supports it behind a flag and an origin trial, and some AI browsers and extensions support it or use the MCP-B polyfill, which the plugin bundles. Nothing changes for human visitors, so there is no downside to installing early.
 
 = Does it work with custom post types and pages? =
 
@@ -92,7 +92,7 @@ Set a tool name prefix such as `blog_`; all tools become `blog_search_posts`, `b
 
 Both expose WordPress content to agents through WebMCP; they focus on different things.
 
-* **agentprose** is read-only and built for reading and quoting: full posts as Markdown (paged, never truncated), sections and a table of contents, related posts, and `get_citation`, which verifies a quote and returns a highlight link. It needs no extra REST endpoints, and the same library works on non-WordPress sites. It uses the current WebMCP API (`registerTool`), with an optional bundled polyfill.
+* **agentprose** is read-only and built for reading and quoting: full posts as Markdown (paged, never truncated), sections and a table of contents, related posts, and `get_citation`, which verifies a quote and returns a highlight link. It needs no extra REST endpoints, and the same library works on non-WordPress sites. It uses the current WebMCP API (`registerTool`) and bundles the MCP-B polyfill for browsers without it.
 * **WebMCP Bridge** covers actions and server-side access: WooCommerce cart and coupon tools, Contact Form 7 submission, menus, a PHP API for custom tools, and a remote MCP endpoint plus an OpenAPI schema for desktop clients and Custom GPTs. Markdown output and llms.txt come from its companion plugin, Mescio for Agents.
 
 If you run a shop or want a server-side MCP endpoint, WebMCP Bridge does that. If you publish articles and want agents to read and cite them accurately, use agentprose. They can run side by side; set a tool prefix to avoid duplicate names.
@@ -103,13 +103,13 @@ All tools are read-only and use only public data from your REST API: what any vi
 
 == Screenshots ==
 
-1. Settings → agentprose: post types, polyfill and the optional agentprose Cloud connection.
+1. Settings → agentprose: post types, the WebMCP polyfill and the optional agentprose Cloud connection.
 2. The 🔌 inspector on a post (administrators only), listing the tools an agent sees.
 
 == Changelog ==
 
 = 0.1.0 =
-* First release on WordPress.org: read-only WebMCP tools for posts, pages and custom post types; settings page; optional bundled WebMCP polyfill; optional agentprose Cloud (analytics and hosted search).
+* First release on WordPress.org: read-only WebMCP tools for posts, pages and custom post types; settings page; bundled MCP-B WebMCP polyfill (served locally, can be switched off); optional agentprose Cloud (analytics and hosted search).
 
 == Upgrade Notice ==
 

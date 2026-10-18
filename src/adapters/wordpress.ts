@@ -13,6 +13,17 @@ export interface WordPressOptions {
  * WordPress REST API (core endpoints, no plugin or auth needed for public content).
  * Docs: https://developer.wordpress.org/rest-api/reference/posts/
  */
+const NAMED: Record<string, string> = { hellip: '…', ndash: '–', mdash: '—', lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”', laquo: '«', raquo: '»', nbsp: ' ' };
+
+/** WordPress renders titles, excerpts and term names with entities (&#8217;, [&hellip;]): plain text out. */
+export function wpText(h: string): string {
+  return stripHtml(h).replace(/&(#x[0-9a-f]{1,6}|#[0-9]{1,7}|[a-z]{2,8});/gi, (m, e: string) => {
+    if (e[0] !== '#') return NAMED[e.toLowerCase()] ?? m;
+    const n = /^#x/i.test(e) ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10);
+    return n > 0 && n <= 0x10ffff && (n < 0xd800 || n > 0xdfff) ? String.fromCodePoint(n === 160 ? 32 : n) : m;
+  });
+}
+
 export function wordpress(o: WordPressOptions): ContentAdapter {
   const f = o.fetch || fetch.bind(globalThis);
   const root = o.api.replace(/\/?$/, '/');
@@ -33,7 +44,7 @@ export function wordpress(o: WordPressOptions): ContentAdapter {
   const termCache: Record<string, Promise<Map<number, Term>>> = {};
   const terms = (tax: 'tags' | 'categories' | 'users') =>
     (termCache[tax] ||= get(url(tax, { per_page: 100, _fields: 'id,name,slug,link,count', ...(tax === 'users' ? {} : { orderby: 'count', order: 'desc' }) }))
-      .then(({ json }) => new Map<number, Term>((json as any[]).map((t) => [t.id, { name: clean(t.name), slug: t.slug, url: t.link, count: t.count }])))
+      .then(({ json }) => new Map<number, Term>((json as any[]).map((t) => [t.id, { name: wpText(t.name), slug: t.slug, url: t.link, count: t.count }])))
       .catch(() => new Map()));
   const termId = async (tax: 'tags' | 'categories' | 'users', name?: string) => {
     if (!name) return undefined;
@@ -50,8 +61,8 @@ export function wordpress(o: WordPressOptions): ContentAdapter {
       url: p.link,
       id: String(p.id),
       slug: p.slug || slugOf(p.link),
-      title: stripHtml(p.title?.rendered || ''),
-      summary: stripHtml(p.excerpt?.rendered || '').replace(/\s*(\[…\]|\[\.\.\.\]|…|Continue reading.*)$/, '') || undefined,
+      title: wpText(p.title?.rendered || ''),
+      summary: wpText(p.excerpt?.rendered || '').replace(/\s*(\[…\]|\[\.\.\.\]|…|Continue reading.*)$/, '') || undefined,
       published: iso(p.date_gmt ? p.date_gmt + 'Z' : p.date),
       updated: iso(p.modified_gmt ? p.modified_gmt + 'Z' : p.modified),
       authors: emb.author ? emb.author.map((a: any) => clean(a.name)).filter(Boolean) : users.get(p.author) ? [users.get(p.author)!.name] : undefined,
@@ -115,7 +126,7 @@ export function wordpress(o: WordPressOptions): ContentAdapter {
       try {
         const r = await f(root.includes('rest_route=') ? root : root + '?_fields=name,description,url', { headers: { Accept: 'application/json' } });
         const j = await r.json();
-        return { name: stripHtml(j.name || ''), description: stripHtml(j.description || ''), url: j.url };
+        return { name: wpText(j.name || ''), description: wpText(j.description || ''), url: j.url };
       } catch {
         return {};
       }

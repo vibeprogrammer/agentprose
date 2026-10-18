@@ -31,7 +31,7 @@ export function siteExec(ctx: SiteCtx) {
     get_citation: async (i: any = {}) => {
         const p = await resolve(i);
         if (!p) return notFound(i);
-        const siteName = extractSite(doc, here()).name || (src.site ? ((await src.site().catch(() => ({}))) as { name?: string }).name : undefined) || undefined;
+        const siteName = extractSite(doc, here()).name;
         const year = p.published ? new Date(p.published).getUTCFullYear() : 'n.d.';
         const who = p.authors?.length ? p.authors.join(', ') : siteName || new URL(p.url).host;
         const out: Record<string, unknown> = { url: p.url, title: p.title, authors: p.authors, published: p.published, site: siteName, citation: `${who} (${year}). ${p.title}. ${siteName ? siteName + '. ' : ''}${p.url}` };

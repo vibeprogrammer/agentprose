@@ -159,7 +159,7 @@ function agentprose_settings_page() {
 				agentprose_text_row( 'prefix', __( 'Tool name prefix', 'agentprose' ), esc_html__( 'Optional, for pages that already register tools with the same names.', 'agentprose' ), 'blog_' );
 				agentprose_text_row( 'subscribe', __( 'Subscribe URL', 'agentprose' ), esc_html__( 'Newsletter or feed address that agents can offer to readers.', 'agentprose' ), get_feed_link(), 'url' );
 				agentprose_checkbox_row( 'navigate', __( 'Navigation tool', 'agentprose' ), __( 'Let agents open other pages of this site (navigate_to)', 'agentprose' ) );
-				agentprose_checkbox_row( 'polyfill', __( 'WebMCP polyfill', 'agentprose' ), __( 'Load the bundled WebMCP polyfill in browsers without built-in WebMCP', 'agentprose' ), esc_html__( 'Needed for agents that read tools through the polyfill (for example the MCP-B browser extension). Served from this site, about 9 KB gzipped, loaded only when the browser has no WebMCP.', 'agentprose' ) );
+				agentprose_checkbox_row( 'polyfill', __( 'WebMCP polyfill', 'agentprose' ), __( 'Load the bundled WebMCP polyfill in browsers without built-in WebMCP', 'agentprose' ), esc_html__( 'Lets agents that read tools through the MCP-B polyfill (for example the MCP-B browser extension or the desktop relay) see the tools. Served from this site (about 9 KB gzipped), loaded after the page only when the browser has no WebMCP. Never loaded from a CDN.', 'agentprose' ) );
 				agentprose_checkbox_row( 'inspector', __( 'Inspector', 'agentprose' ), __( 'Show the 🔌 tool inspector to administrators on the front end', 'agentprose' ) );
 				?>
 			</table>

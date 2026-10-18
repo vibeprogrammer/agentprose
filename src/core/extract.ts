@@ -170,7 +170,7 @@ export function extractPage(doc: Document, url: string, opts: { selector?: strin
     ...ldNames(art.author),
     ...metas(doc, 'article:author').filter((a) => !/^https?:/.test(a)),
     meta(doc, 'author'),
-    clean(doc.querySelector('[rel="author"],.p-author,.author-name,[itemprop="author"] [itemprop="name"],.wp-block-post-author-name,.author.vcard .fn')?.textContent),
+    clean(doc.querySelector('[rel="author"],.p-author,.author-name,[itemprop="author"] [itemprop="name"]')?.textContent),
   ]).slice(0, 5);
   // Listing pages (many <article> cards) are not articles even when they are long and dated.
   const cards = doc.querySelectorAll('article').length;
