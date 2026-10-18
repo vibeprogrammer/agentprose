@@ -13,6 +13,14 @@ declare const __VERSION__: string;
 export const VERSION: string = typeof __VERSION__ === 'string' ? __VERSION__ : 'dev';
 /** The MCP-B WebMCP polyfill, pinned. Loaded only when a page has no WebMCP (see `polyfill`). */
 export const POLYFILL_URL = 'https://cdn.jsdelivr.net/npm/@mcp-b/webmcp-polyfill@6.0.3/dist/index.iife.js';
+/** Subresource Integrity hash of exactly that file (test/unit/polyfill-sri.test.ts keeps the two in step). */
+export const POLYFILL_SRI = 'sha384-aEnX8+GGpZs7j3YINfHJw5npl4H6AkfYHQ5KqdgJzScZ5s76I533BzlPrceDInPx';
+
+/**
+ * `true`, "true" or "auto": the pinned MCP-B build above, with its integrity hash. A string with a slash: that URL,
+ * as given (no integrity). An object: that URL with your own integrity hash. `false`: never load a polyfill.
+ */
+export type PolyfillOption = boolean | string | { src: string; integrity?: string };
 
 export interface Instance {
   /** The tool definitions (instrumented). Usable without WebMCP: `await instance.call('search_posts', {query})`. */
@@ -35,7 +43,7 @@ export interface Instance {
  * createAgentTools({ index: '/agent-index.json' });
  * ```
  */
-export function createAgentTools(cfg: Config & { polyfill?: boolean | string; register?: boolean } = {}): Instance {
+export function createAgentTools(cfg: Config & { polyfill?: PolyfillOption; register?: boolean } = {}): Instance {
   const source = cfg.adapter || lazyAuto(cfg);
   const prefix = cfg.prefix || '';
   const tools = buildTools(cfg, source).map((t) => instrument({ ...t, name: prefix + t.name }, cfg));
@@ -48,8 +56,11 @@ export function createAgentTools(cfg: Config & { polyfill?: boolean | string; re
     // first; then fill the gap with the MCP-B polyfill only if nothing did.
     if (p) {
       if (document.readyState != 'complete') await new Promise((r) => addEventListener('load', r, { once: true }));
-      // A string with a slash is a polyfill URL; true, "true" or "auto" mean the pinned MCP-B build.
-      if (!(navigator as any).modelContext) await loadPolyfill(/\//.test(p as string) ? (p as string) : POLYFILL_URL);
+      // A string with a slash is a polyfill URL; true, "true" or "auto" mean the pinned MCP-B build (with SRI).
+      if (!(navigator as any).modelContext) {
+        const o = typeof p == 'object' ? p : /\//.test(p as string) ? { src: p as string } : { src: POLYFILL_URL, integrity: POLYFILL_SRI };
+        await loadPolyfill(o.src, o.integrity);
+      }
     }
     reg = await register(tools, cfg);
     return reg;

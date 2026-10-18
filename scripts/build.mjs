@@ -64,7 +64,9 @@ const report = [size(`dist/${NAME}.min.js`), size(`dist/${NAME}.index.min.js`), 
 for (const r of report) console.log(`${r.file.padEnd(40)} ${String(r.bytes).padStart(7)} B  ${String(r.gzip).padStart(6)} B gzip`);
 writeFileSync('dist/sizes.json', JSON.stringify(report, null, 2));
 const [core, engine] = report;
-if (core.gzip > 10240 || core.gzip + engine.gzip > 16384) {
-  console.error(`Size budget exceeded: core ${core.gzip} B (max 10240), core+engine ${core.gzip + engine.gzip} B (max 16384).`);
+// core+engine was 16,384 B until 0.1.2, which added 256 B for the polyfill's integrity hash and version pinning.
+const BUDGET = { core: 10240, total: 16640 };
+if (core.gzip > BUDGET.core || core.gzip + engine.gzip > BUDGET.total) {
+  console.error(`Size budget exceeded: core ${core.gzip} B (max ${BUDGET.core}), core+engine ${core.gzip + engine.gzip} B (max ${BUDGET.total}).`);
   process.exit(1);
 }

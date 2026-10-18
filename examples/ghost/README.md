@@ -3,7 +3,7 @@
 Settings → Code injection → Site header:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer
         data-adapter="ghost" data-key="YOUR_CONTENT_API_KEY"></script>
 ```
 

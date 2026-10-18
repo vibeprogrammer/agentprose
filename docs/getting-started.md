@@ -5,10 +5,10 @@
 Put this in your site's `<head>` (or before `</body>`):
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer></script>
 ```
 
-Pin a version in production (`agentprose@0.1.1`). To self-host, copy `agentprose.min.js`, `agentprose.index.min.js`, `agentprose.inspector.min.js` and the `adapters/` folder from `node_modules/agentprose/dist/` into one directory. The core loads its other files from the directory it was served from.
+`agentprose@0` follows the latest 0.x release, so your site gets fixes without touching the tag. To freeze an exact version (optionally with an SRI hash), see [versioning.md](versioning.md). To self-host, copy `agentprose.min.js`, `agentprose.index.min.js`, `agentprose.inspector.min.js` and the `adapters/` folder from `node_modules/agentprose/dist/` into one directory (plus the MCP-B polyfill, see [security.md](security.md#the-mcp-b-polyfill)). The core loads its other files from the directory it was served from.
 
 Where to put it:
 

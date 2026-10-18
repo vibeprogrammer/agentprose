@@ -1,8 +1,11 @@
 import type { Lib } from './lib';
-import { addScript } from './script';
+import { addScript, base } from './script';
+
+declare const __VERSION__: string;
 
 // Captured while the script-tag build is first evaluated, when currentScript is ours.
-const me = (document.currentScript as HTMLScriptElement | null)?.src;
+const cur = (document.currentScript as HTMLScriptElement | null)?.src;
+const me = cur && base(cur, __VERSION__);
 let p: Promise<Lib> | undefined;
 
 export const loadLib = (): Promise<Lib> =>

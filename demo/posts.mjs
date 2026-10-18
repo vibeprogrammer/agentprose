@@ -48,7 +48,7 @@ export const posts = [
     body: `
 <p>agentprose reads what your site already publishes — schema.org JSON-LD, OpenGraph tags, the <code>&lt;article&gt;</code> element, your RSS, Atom or JSON Feed, <code>sitemap.xml</code> and <code>llms.txt</code> — and turns it into WebMCP tools.</p>
 <h2>The one line</h2>
-<pre><code class="language-html">&lt;script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer&gt;&lt;/script&gt;</code></pre>
+<pre><code class="language-html">&lt;script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer&gt;&lt;/script&gt;</code></pre>
 <p>That is the whole install. On page load agentprose registers its tools and fetches nothing. The first time an agent searches or lists posts, it loads a small engine and reads your feed and sitemap.</p>
 <h2>Optional attributes</h2>
 <table>
