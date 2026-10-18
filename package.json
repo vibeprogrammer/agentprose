@@ -1,6 +1,6 @@
 {
   "name": "agentprose",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Make any blog or CMS readable by AI agents through WebMCP — one script tag, zero config, read-only tools for articles, search, sections and citations.",
   "keywords": [
     "webmcp",
@@ -94,6 +94,7 @@
     "linkedom": "^0.18.13"
   },
   "devDependencies": {
+    "@mcp-b/webmcp-polyfill": "6.0.3",
     "@types/node": "^22.20.5",
     "esbuild": "^0.24.2",
     "happy-dom": "^15.11.7",

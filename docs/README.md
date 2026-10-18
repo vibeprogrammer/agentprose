@@ -8,6 +8,7 @@
 - [Browser support](browser-support.md): native WebMCP, the origin trial, the polyfill, fallbacks
 - [Tutorial: your blog inside Claude Desktop/Cursor with MCP-B](tutorials/mcp-b-claude-desktop.md): agentprose + the MCP-B local relay
 - [Architecture](architecture.md): how discovery, lazy loading and registration work
-- [Security](security.md): threat model and guarantees
+- [Versioning and updates](versioning.md): the `agentprose@0` and `/v/0/` channels, pinning an exact version with SRI
+- [Security](security.md): threat model and guarantees, and [the MCP-B polyfill](security.md#the-mcp-b-polyfill): when it loads, from where, its integrity hash, opting out, self-hosting, CSP
 - [Comparison](comparison.md): the existing landscape, with sources
 - [Business model](BUSINESS.md): how agentprose stays open source and sustainable

@@ -26,7 +26,7 @@ agentprose turns the content your site already publishes into read-only [WebMCP]
 ---
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer></script>
 ```
 
 That's the whole install. agentprose needs no build step, no backend, no account and no configuration.
@@ -78,17 +78,21 @@ Nothing is fetched on page load. Registering the tools costs no network requests
 ### 1. One line (any site)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer
         data-subscribe="https://example.com/newsletter"></script>
 ```
 
 Every option is a `data-*` attribute; see [docs/configuration.md](docs/configuration.md).
 
+`agentprose@0` always serves the latest 0.x release, so fixes reach your site without a new tag; breaking changes would ship as `agentprose@1`. To freeze an exact version, with an optional SRI hash, see [docs/versioning.md](docs/versioning.md).
+
 Using [agentprose Cloud](https://agentprose.cloud)? Load the same library from the Cloud instead. Your site's public key (`pk_…`, from the dashboard) is the only attribute, and hosted search and agent analytics switch on by themselves:
 
 ```html
-<script src="https://agentprose.cloud/v/0.1.0/agentprose.min.js" data-key="pk_…" defer></script>
+<script src="https://agentprose.cloud/v/0/agentprose.min.js" data-key="pk_…" defer></script>
 ```
+
+`/v/0/` is the Cloud's evergreen channel (latest 0.x, fixes within about an hour); `/v/<exact version>/` pins one release. Everything the Cloud snippet loads, including the MCP-B polyfill, comes from `agentprose.cloud`.
 
 Add `?agentprose-inspect` to any URL to open the 🔌 inspector. It lists the registered tools and lets you call them, in any browser.
 
@@ -150,7 +154,7 @@ A **private** dataset or token can't go in a page, because every visitor can rea
 | Environment | Behaviour |
 |---|---|
 | Chrome with `chrome://flags/#enable-webmcp-testing`, or the WebMCP origin trial | Native `document.modelContext`. Tested end-to-end in Chromium 156. |
-| Any other browser | agentprose loads the pinned [MCP-B polyfill](https://www.npmjs.com/package/@mcp-b/webmcp-polyfill) (9 KB gzipped, from jsDelivr) **after the page has loaded**, and registers into its `document.modelContext`. Nothing is loaded when the page already has WebMCP. Tested end-to-end. `data-polyfill="off"` turns it off. |
+| Any other browser | agentprose loads the pinned [MCP-B polyfill](https://www.npmjs.com/package/@mcp-b/webmcp-polyfill) (9 KB gzipped, from jsDelivr with an integrity hash, or from agentprose Cloud when you use the Cloud snippet) **after the page has loaded**, and registers into its `document.modelContext`. Nothing is loaded when the page already has WebMCP. Tested end-to-end. `data-polyfill="off"` turns it off. |
 | Older polyfills exposing `navigator.modelContext` | Used as a fallback (`legacy` mode); no polyfill is loaded. |
 | Polyfill blocked (strict CSP, offline) or turned off | Registers nothing, throws nothing, changes nothing. Tools stay callable via `window.AgentProse.instance.call()`. |
 
@@ -160,12 +164,18 @@ WebMCP runs only in secure contexts (HTTPS or localhost). Embedded frames need t
 
 [MCP-B](https://docs.mcp-b.ai/) gives a page the WebMCP runtime. agentprose gives it something to say. The two fit together with no glue code:
 
-- **The polyfill is built in.** In browsers without WebMCP, agentprose loads `@mcp-b/webmcp-polyfill@6.0.3` once the page has loaded, so MCP-B's extension, relay and other clients find the tools through the standard `document.modelContext`. `data-polyfill="off"` opts out; `data-polyfill="/js/webmcp-polyfill.js"` self-hosts it (strict CSP).
+- **The polyfill is built in.** In browsers without WebMCP, agentprose loads `@mcp-b/webmcp-polyfill@6.0.3` once the page has loaded, so MCP-B's extension, relay and other clients find the tools through the standard `document.modelContext`. In short:
+  - **When:** only after the `load` event, and only if the page still has no WebMCP (native, `@mcp-b/global`, an extension). Never in Chrome with native WebMCP.
+  - **From where:** jsDelivr, pinned to 6.0.3, with a Subresource Integrity hash (`integrity="sha384-…"`), so the browser runs only the exact file agentprose was tested with. The agentprose Cloud snippet loads the same file from `agentprose.cloud` instead, so there is one domain to trust.
+  - **Opt out:** `data-polyfill="off"`. **Self-host:** copy the file and set `data-polyfill="/js/webmcp-polyfill.js"`.
+  - **Strict CSP:** allow `https://cdn.jsdelivr.net` in `script-src`, or self-host.
+
+  The full story (why, the hash, self-hosting steps, a CSP table): [docs/security.md](docs/security.md#the-mcp-b-polyfill).
 - **`@mcp-b/global` is detected.** If the page loads MCP-B's full runtime, agentprose registers into it and loads nothing extra.
 - **Your blog inside Claude Desktop, Cursor or Claude Code.** Add MCP-B's local relay embed next to agentprose, add the relay to your MCP client, and the agent can search, read and cite your posts from the tab you have open:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@mcp-b/webmcp-local-relay@6/dist/browser/embed.js" defer></script>
 ```
 
@@ -189,7 +199,7 @@ The full landscape, with sources, is in [docs/comparison.md](docs/comparison.md)
 
 ## Performance & safety
 
-- **9.4 KB gzipped** core. It's deferred and doesn't touch layout. The core works with strict CSP: no `eval`, no inline code, and scripts load only from the script's own directory, plus the MCP-B polyfill from jsDelivr after the load event in browsers without WebMCP (self-host it with `data-polyfill="/path.js"`, or `data-polyfill="off"`). The lazily loaded engine is 6.6 KB, and each adapter is 2–3 KB.
+- **9.9 KB gzipped** core. It's deferred and doesn't touch layout. The core works with strict CSP: no `eval`, no inline code, and scripts load only from the script's own directory, plus the MCP-B polyfill (pinned, integrity-checked) from jsDelivr after the load event in browsers without WebMCP (self-host it with `data-polyfill="/path.js"`, or `data-polyfill="off"`; see [the polyfill notes](docs/security.md#the-mcp-b-polyfill)). The lazily loaded engine is 6.6 KB, and each adapter is 2–3 KB.
 - **Read-only.** The only tool that does anything is `navigate_to`, which is opt-in and same-origin only.
 - **Bounded output.** Answers are capped (`maxChars`, default 20,000) and continue with `offset`/`next_offset`. Indexes are capped (`maxPosts`, default 2,000).
 - **Same-origin only.** agentprose fetches only your own pages, feeds and sitemaps. It never acts as an open proxy.
@@ -219,13 +229,13 @@ Learn which posts agents read, what they search for and what comes up empty. Sea
 
 ```bash
 npm install
-npm run typecheck && npm test   # 87 unit tests (vitest + happy-dom/linkedom)
+npm run typecheck && npm test   # 104 unit tests (vitest + happy-dom/linkedom)
 npm run build                   # dist/, prints gzipped sizes, fails over budget
 CHROME=$(which chromium) npm run test:e2e   # 12 end-to-end tests in headless Chromium (native WebMCP flag)
 npm run demo                    # builds the demo blog into demo/site
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md). Releases: [RELEASING.md](RELEASING.md).
 
 ## License
 

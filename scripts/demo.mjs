@@ -84,7 +84,7 @@ ${body}
 const tagLinks = (tags) => `<div class="tags">${tags.map((t) => `<a href="/tags/${tagSlug(t)}/" rel="tag">${esc(t)}</a>`).join('')}</div>`;
 const card = (p) => `<article><h3><a href="/posts/${p.slug}/">${esc(p.title)}</a></h3><div class="meta"><time datetime="${p.date}">${fmt(p.date)}</time> · ${esc(p.author)}</div><p>${esc(p.summary)}</p>${tagLinks(p.tags)}</article>`;
 
-const SNIPPET = `<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer></script>`;
+const SNIPPET = `<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer></script>`;
 const home = layout({
   title: `${site.name} — agent-readable with one line`,
   description: site.description,

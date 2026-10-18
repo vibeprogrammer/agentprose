@@ -4,6 +4,22 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-18
+
+### Security
+- The default MCP-B polyfill tag now carries Subresource Integrity: `integrity="sha384-aEnX8+GGpZs7j3YINfHJw5npl4H6AkfYHQ5KqdgJzScZ5s76I533BzlPrceDInPx"` and `crossorigin="anonymous"` for `@mcp-b/webmcp-polyfill@6.0.3`. If a CDN ever served a different file, the browser refuses it and agentprose settles in mode `none`. A polyfill URL you supply yourself (`data-polyfill="/js/…"`) is used as given, without a hash; the npm API also accepts `polyfill: { src, integrity }`. New export: `POLYFILL_SRI`.
+- Tests keep the pin and the hash in step: `@mcp-b/webmcp-polyfill` is now an exact devDependency, a unit test compares the hash with the npm package and with jsDelivr, and an e2e test shows a tampered file being refused.
+
+### Changed
+- A copy served by agentprose Cloud (a `/v/<version>/` folder, including the evergreen `/v/0/`) loads the polyfill from the same Cloud (`/v/<exact version>/webmcp-polyfill.js`, same hash) instead of jsDelivr, so the Cloud snippet needs one domain in a CSP.
+- A core loaded through a moving channel (`agentprose@0` on jsDelivr, `/v/0/` on the Cloud) loads its engine, adapters, inspector and polyfill from its own exact version, so a cached core never pairs with a newer engine.
+- Docs recommend `agentprose@0` (latest 0.x) instead of `agentprose@0.1`, and `https://agentprose.cloud/v/0/` for the Cloud. Pinning an exact version with SRI is documented as the advanced option ([docs/versioning.md](docs/versioning.md)).
+- Size budget: core + engine raised from 16,384 B to 16,640 B gzipped (+256 B) for the hash and the version pinning. Core is 9,893 B gzipped (was 9,636 B); the engine is unchanged (6,744 B).
+
+### Added
+- Docs: what the polyfill is, when and from where it loads, the pinned version and hash, opting out, self-hosting and a CSP table ([docs/security.md](docs/security.md#the-mcp-b-polyfill)); [docs/versioning.md](docs/versioning.md).
+- [RELEASING.md](RELEASING.md) and `scripts/purge-jsdelivr.mjs` (purges `@0` and `@0.1` for every file in `dist/`).
+
 ## [0.1.1] - 2026-10-18
 
 ### Changed

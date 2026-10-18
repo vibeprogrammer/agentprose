@@ -1,4 +1,4 @@
 {{- /* agentprose: agent-readable content via WebMCP */ -}}
-<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer
   {{- with site.Params.newsletter }} data-subscribe="{{ . }}"{{ end }}
   {{- if ne (urls.Parse site.BaseURL).Path "/" }} data-base="{{ site.BaseURL }}"{{ end }}></script>

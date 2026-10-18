@@ -116,12 +116,15 @@ export async function register(tools: ToolDefinition[], cfg: Config): Promise<Re
   return out;
 }
 
-/** Loads a polyfill script and resolves once document.modelContext exists, the script fails, or 10 s pass. */
-export function loadPolyfill(src: string): Promise<boolean> {
+/**
+ * Loads a polyfill script and resolves once document.modelContext exists, the script fails, or 10 s pass.
+ * `integrity` (an SRI hash) makes the browser refuse the file unless it is exactly the expected one.
+ */
+export function loadPolyfill(src: string, integrity?: string): Promise<boolean> {
   return new Promise((resolve) => {
     if ((document as any).modelContext) return resolve(true);
     const done = () => resolve(!!(document as any).modelContext);
-    addScript(src, done);
+    addScript(src, done, integrity);
     setTimeout(done, 1e4);
   });
 }

@@ -3,7 +3,7 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, writeFileSync, mkdirSync, readFileSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, mkdirSync, readFileSync, cpSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { chromium } from 'playwright-core';
@@ -24,6 +24,15 @@ before(async () => {
   // Fixture: a page that opts out of the MCP-B polyfill.
   mkdirSync(join(root, 'nopoly'), { recursive: true });
   writeFileSync(join(root, 'nopoly/index.html'), `<!doctype html><html><head><title>No polyfill</title><meta property="og:type" content="article"></head><body><article><h1>No polyfill</h1><p>${'Text. '.repeat(30)}</p></article><script src="/agentprose.min.js" defer data-polyfill="off" data-sitemap="false" data-llms="false"></script></body></html>`);
+  // Fixture: a copy laid out like an agentprose Cloud: /v/<version>/ and the evergreen channel /v/0/, with the
+  // self-hosted polyfill next to the bundle.
+  const version = JSON.parse(readFileSync('package.json', 'utf8')).version;
+  for (const v of ['0', version]) {
+    cpSync('dist', join(root, 'v', v), { recursive: true });
+    cpSync('node_modules/@mcp-b/webmcp-polyfill/dist/index.iife.js', join(root, 'v', v, 'webmcp-polyfill.js'));
+  }
+  mkdirSync(join(root, 'cloudcopy'), { recursive: true });
+  writeFileSync(join(root, 'cloudcopy/index.html'), `<!doctype html><html><head><title>Cloud copy</title><meta property="og:type" content="article"><script src="/v/0/agentprose.min.js" defer data-sitemap="false" data-llms="false"></script></head><body><article><h1>Cloud copy</h1><p>${'Text. '.repeat(30)}</p></article></body></html>`);
   // Fixture: a WordPress-like theme page (REST API mocked under /wp/wp-json/).
   mkdirSync(join(root, 'wp/hello-wordpress'), { recursive: true });
   writeFileSync(join(root, 'wp/hello-wordpress/index.html'), `<!doctype html><html><head><title>Hello WordPress</title><link rel="https://api.w.org/" href="${base}wp/wp-json/"><meta property="og:type" content="article"></head><body><article><h1 class="entry-title">Hello WordPress</h1><div class="entry-content"><p>${'Welcome to WordPress. '.repeat(20)}</p></div></article><script src="/agentprose.min.js" defer></script></body></html>`);
@@ -66,6 +75,7 @@ async function open(browser, path, { init, block } = {}) {
 }
 
 const POLYFILL = 'https://cdn.jsdelivr.net/npm/@mcp-b/webmcp-polyfill@6.0.3/dist/index.iife.js';
+const SRI = readFileSync('src/index.ts', 'utf8').match(/POLYFILL_SRI = '(sha384-[^']+)'/)[1];
 const cdnOnline = () => fetch(POLYFILL, { method: 'HEAD' }).then((r) => r.ok).catch(() => false);
 
 /** Calls a tool through the browser's own WebMCP implementation, as an agent would. */
@@ -185,6 +195,44 @@ test('browsers without WebMCP: by default the MCP-B polyfill loads after the pag
   assert.ok(r.n >= 9);
   assert.equal(r.title, 'Search without a server');
   assert.ok(r.loaded, 'the polyfill waits for the load event');
+  assert.deepEqual(errors, []);
+  // The injected tag carries Subresource Integrity, and the real file from jsDelivr passed it (mode native above).
+  const tag = await page.evaluate((u) => { const s = document.querySelector(`script[src="${u}"]`); return { integrity: s?.integrity, cors: s?.crossOrigin }; }, POLYFILL);
+  assert.deepEqual(tag, { integrity: SRI, cors: 'anonymous' });
+});
+
+test('SRI: a polyfill file that is not byte-for-byte the pinned one is refused by the browser; the page carries on', async () => {
+  const page = await plain.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.route('**/@mcp-b/**', (r) => r.fulfill({ status: 200, contentType: 'text/javascript', headers: { 'access-control-allow-origin': '*' }, body: 'window.__tampered = true; document.modelContext = { registerTool() {} };' }));
+  await page.goto(base + 'posts/search-without-a-server/');
+  const r = await page.evaluate(async () => {
+    await window.AgentProse.ready;
+    const reg = await window.AgentProse.instance.ready;
+    return { mode: reg.mode, tampered: !!window.__tampered, title: (await window.AgentProse.instance.call('get_current_article')).title };
+  });
+  assert.deepEqual(r, { mode: 'none', tampered: false, title: 'Search without a server' });
+  assert.deepEqual(errors, []);
+  await page.close();
+});
+
+test('a copy served from a Cloud channel (/v/0/) loads the polyfill and the engine from its exact version folder, never a CDN', async () => {
+  const version = JSON.parse(readFileSync('package.json', 'utf8')).version;
+  const { page, errors, cdn, requests } = await open(plain, 'cloudcopy/');
+  const r = await page.evaluate(async () => {
+    const reg = await window.AgentProse.instance.ready;
+    const res = await window.AgentProse.instance.call('search_posts', { query: 'cloud' });
+    const s = [...document.scripts].find((x) => x.src.endsWith('webmcp-polyfill.js'));
+    return { mode: reg.mode, searched: !!res, integrity: s?.integrity };
+  });
+  assert.equal(r.mode, 'native');
+  assert.equal(r.integrity, SRI);
+  assert.deepEqual(cdn, []);
+  const got = requests();
+  assert.ok(got.includes(`/v/${version}/webmcp-polyfill.js`), got.join(' '));
+  assert.ok(got.includes(`/v/${version}/agentprose.index.min.js`), got.join(' '));
+  assert.ok(!got.some((p) => p.startsWith('/v/0/') && p !== '/v/0/agentprose.min.js'), got.join(' '));
   assert.deepEqual(errors, []);
 });
 

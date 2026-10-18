@@ -5,7 +5,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         {children}
-        <Script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" strategy="afterInteractive" data-subscribe="/newsletter" />
+        <Script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" strategy="afterInteractive" data-subscribe="/newsletter" />
       </body>
     </html>
   );

@@ -27,10 +27,10 @@ Everything is optional.
 | `data-cache` | `0` | Seconds to cache the index in sessionStorage (default 600) |
 | `data-search-endpoint` | `https://search.example.com/q` | Remote search: `GET ?q=&limit=` → `{ items: [...] }` |
 | `data-analytics` | `https://stats.example.com/agent` | Beacon per tool call (v2): `{v, key, tool, ok, ms, page, query?, n?, found?, post?, err?, sid}`. `query` only for search tools (≤200 chars), `n` = result count, `found` = citation verdict, `post` = URL argument, `sid` = random id per page load. Never post content |
-| `data-cloud` | `https://agentprose.cloud` | With `data-key`: hosted analytics (`/v1/collect`) and hosted search (`/v1/search`) in one attribute. `data-cloud-search="false"` keeps search local. Optional when the script itself is served by agentprose Cloud (`https://agentprose.cloud/v/0.1.0/agentprose.min.js`): with `data-key` and no `data-cloud`, the script's origin is used. Required when loading from jsDelivr or unpkg (agentprose warns in the console if it is missing). `data-cloud="false"` turns the Cloud off. The page's own origin is never treated as a Cloud |
+| `data-cloud` | `https://agentprose.cloud` | With `data-key`: hosted analytics (`/v1/collect`) and hosted search (`/v1/search`) in one attribute. `data-cloud-search="false"` keeps search local. Optional when the script itself is served by agentprose Cloud (`https://agentprose.cloud/v/0/agentprose.min.js`): with `data-key` and no `data-cloud`, the script's origin is used. Required when loading from jsDelivr or unpkg (agentprose warns in the console if it is missing). `data-cloud="false"` turns the Cloud off. The page's own origin is never treated as a Cloud |
 | `data-key` | `pk_…` | With the Cloud: your site's public key (`pk_…`, from the agentprose Cloud dashboard; safe to publish in page HTML). With `data-adapter`: the CMS adapter's key. Also sent with `data-analytics` beacons |
 | `data-exposed-to` | `https://partner.example` | Origins of other frames allowed to see the tools (WebMCP `exposedTo`) |
-| `data-polyfill` | `off`, or a URL | On by default: when the page has no WebMCP once it has loaded (no native `document.modelContext`, no `@mcp-b/global`, no legacy `navigator.modelContext`), load the pinned MCP-B polyfill (`@mcp-b/webmcp-polyfill@6.0.3`, jsDelivr) and register into it. `off`/`false` never loads it. A URL (anything with a `/`) self-hosts it. The 0.1.0 flag form (`data-polyfill`, `true`, `auto`) means the default |
+| `data-polyfill` | `off`, or a URL | On by default: when the page has no WebMCP once it has loaded (no native `document.modelContext`, no `@mcp-b/global`, no legacy `navigator.modelContext`), load the pinned MCP-B polyfill (`@mcp-b/webmcp-polyfill@6.0.3` from jsDelivr, with a Subresource Integrity hash) and register into it. A copy served by agentprose Cloud loads the same file from the Cloud instead. `off`/`false` never loads it. A URL (anything with a `/`) self-hosts it, used as given without an integrity hash. The 0.1.0 flag form (`data-polyfill`, `true`, `auto`) means the default. Details, CSP and self-hosting: [security.md](security.md#the-mcp-b-polyfill) |
 | `data-untrusted` | `false` | Turn off `untrustedContentHint` (only for fully trusted content) |
 | `data-inspector` | (flag) or `open` | Load the 🔌 inspector. Every page also accepts `?agentprose-inspect` |
 | `data-debug` | (flag) | Log registration results to the console |
@@ -44,7 +44,7 @@ For options that need code (callbacks, custom tools), set `window.AgentProseConf
     tools: [{ name: 'get_store_hours', description: 'Opening hours of our shop.', annotations: { readOnlyHint: true }, execute: () => ({ mon_fri: '9-17' }) }],
   };
 </script>
-<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer></script>
 ```
 
 `window.AgentProse` exposes `version`, `instance` (`tools`, `call()`, `ready`, `destroy()`), `ready`, `create()` and `adapters`. The `agentprose:ready` event fires on `document` once tools are registered.

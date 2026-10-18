@@ -18,13 +18,13 @@ your blog tab                                   your computer
 agentprose needs one script tag. MCP-B's embed connects the tab to the relay:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/agentprose@0.1/dist/agentprose.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@mcp-b/webmcp-local-relay@6/dist/browser/embed.js" defer></script>
 ```
 
 agentprose loads MCP-B's WebMCP polyfill on its own in browsers that don't have WebMCP yet (after the page has loaded, about 9 KB). If your site already uses [`@mcp-b/global`](https://docs.mcp-b.ai/packages/global/overview), agentprose registers into it and loads nothing extra.
 
-> **Version note.** The built-in polyfill ships in agentprose **0.1.1** (`agentprose@0.1` serves it once 0.1.1 is on npm). On agentprose **0.1.0**, add MCP-B's runtime in `<head>` first: `<script src="https://cdn.jsdelivr.net/npm/@mcp-b/global@6/dist/index.iife.js"></script>`. That combination was tested end to end too (see below).
+> **Version note.** The built-in polyfill ships in agentprose **0.1.1** and later (`agentprose@0` serves it); from 0.1.2 it carries an integrity hash ([details](../security.md#the-mcp-b-polyfill)). On agentprose **0.1.0**, add MCP-B's runtime in `<head>` first: `<script src="https://cdn.jsdelivr.net/npm/@mcp-b/global@6/dist/index.iife.js"></script>`. That combination was tested end to end too (see below).
 
 **Should every visitor load the embed?** Usually not. The embed looks for a relay on `localhost` ports 9333–9348 from every visitor's browser. On a public site, Chrome asks each visitor for permission to reach their local network, and visitors without a relay see failed connections in the console. Three ways to keep it to yourself:
 
