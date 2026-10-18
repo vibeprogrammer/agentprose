@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Changed
+- The MCP-B WebMCP polyfill is on by default in the script-tag build. After the page's `load` event, if the page still has no WebMCP (no native `document.modelContext`, no `@mcp-b/global`, no legacy `navigator.modelContext`), agentprose loads `@mcp-b/webmcp-polyfill@6.0.3` from jsDelivr (was unpkg) and registers into it. `data-polyfill="off"` (or `false`) opts out; a URL self-hosts it; the 0.1.0 flag form still works. The npm `createAgentTools()` default is unchanged (off). A blocked or slow polyfill (CSP, offline, 10 s) settles as mode `none` without errors.
+- Core bundle unchanged in size (9,636 B gzipped, was 9,637 B): the four script loaders now share one helper.
+
+### Added
+- Tutorial: [your blog inside Claude Desktop/Cursor with agentprose + MCP-B](docs/tutorials/mcp-b-claude-desktop.md), and [examples/mcp-b-desktop](examples/mcp-b-desktop/) with an end-to-end check (official MCP SDK client → `@mcp-b/webmcp-local-relay` → headless Chromium page).
+- Tests: 7 unit tests for polyfill loading; e2e for the default polyfill, opt-out, a blocked polyfill and a page that already has WebMCP.
+
 ## [0.1.0] - 2026-10-18
 
 ### Changed

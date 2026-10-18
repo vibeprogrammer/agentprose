@@ -21,6 +21,9 @@ before(async () => {
   // Fixture: a bare page with no feed, sitemap or llms.txt.
   mkdirSync(join(root, 'bare'), { recursive: true });
   writeFileSync(join(root, 'bare/index.html'), `<!doctype html><html lang="en"><head><title>Bare</title></head><body><main><h1>A bare page</h1><p>${'Just text. '.repeat(40)}</p><h2>Only section</h2><p>End.</p></main><script src="/agentprose.min.js" defer data-sitemap="false" data-llms="false"></script></body></html>`);
+  // Fixture: a page that opts out of the MCP-B polyfill.
+  mkdirSync(join(root, 'nopoly'), { recursive: true });
+  writeFileSync(join(root, 'nopoly/index.html'), `<!doctype html><html><head><title>No polyfill</title><meta property="og:type" content="article"></head><body><article><h1>No polyfill</h1><p>${'Text. '.repeat(30)}</p></article><script src="/agentprose.min.js" defer data-polyfill="off" data-sitemap="false" data-llms="false"></script></body></html>`);
   // Fixture: a WordPress-like theme page (REST API mocked under /wp/wp-json/).
   mkdirSync(join(root, 'wp/hello-wordpress'), { recursive: true });
   writeFileSync(join(root, 'wp/hello-wordpress/index.html'), `<!doctype html><html><head><title>Hello WordPress</title><link rel="https://api.w.org/" href="${base}wp/wp-json/"><meta property="og:type" content="article"></head><body><article><h1 class="entry-title">Hello WordPress</h1><div class="entry-content"><p>${'Welcome to WordPress. '.repeat(20)}</p></div></article><script src="/agentprose.min.js" defer></script></body></html>`);
@@ -48,15 +51,22 @@ after(async () => {
   srv?.server.close();
 });
 
-async function open(browser, path) {
+async function open(browser, path, { init, block } = {}) {
   const page = await browser.newPage();
   const errors = [];
+  const cdn = [];
   page.on('pageerror', (e) => errors.push(e.message));
+  page.on('request', (r) => r.url().includes('@mcp-b/') && cdn.push(r.url()));
+  if (block) await page.route('**/@mcp-b/**', (r) => r.abort());
+  if (init) await page.addInitScript(init);
   const t0 = srv.log.length;
   await page.goto(base + path);
   await page.waitForFunction(() => window.AgentProse?.ready).then(() => page.evaluate(() => window.AgentProse.ready));
-  return { page, errors, requests: () => srv.log.slice(t0) };
+  return { page, errors, cdn, requests: () => srv.log.slice(t0) };
 }
+
+const POLYFILL = 'https://cdn.jsdelivr.net/npm/@mcp-b/webmcp-polyfill@6.0.3/dist/index.iife.js';
+const cdnOnline = () => fetch(POLYFILL, { method: 'HEAD' }).then((r) => r.ok).catch(() => false);
 
 /** Calls a tool through the browser's own WebMCP implementation, as an agent would. */
 const callNative = (page, name, input = {}) =>
@@ -148,15 +158,54 @@ test('get_related_posts and get_site_info', async (t) => {
   assert.equal(info.links.subscribe, base + 'feed.xml');
 });
 
-test('browsers without WebMCP: no errors, tools still callable through window.AgentProse', async () => {
-  const { page, errors } = await open(plain, 'posts/search-without-a-server/');
+test('browsers without WebMCP, data-polyfill="off": nothing extra loads, tools still callable through window.AgentProse', async () => {
+  const { page, errors, cdn } = await open(plain, 'nopoly/');
   const r = await page.evaluate(async () => {
     const reg = await window.AgentProse.instance.ready;
     const art = await window.AgentProse.instance.call('get_current_article');
     return { has: 'modelContext' in document, mode: reg.mode, title: art.title };
   });
-  assert.deepEqual(r, { has: false, mode: 'none', title: 'Search without a server' });
+  assert.deepEqual(r, { has: false, mode: 'none', title: 'No polyfill' });
+  assert.deepEqual(cdn, []);
   assert.deepEqual(errors, []);
+});
+
+test('browsers without WebMCP: by default the MCP-B polyfill loads after the page and the tools register into it', async (t) => {
+  if (!(await cdnOnline())) return t.skip('offline: polyfill CDN unreachable');
+  const { page, errors, cdn } = await open(plain, 'posts/search-without-a-server/');
+  const r = await page.evaluate(async () => {
+    const reg = await window.AgentProse.instance.ready;
+    const mc = document.modelContext;
+    const tools = await mc.getTools();
+    const t = tools.find((x) => x.name === 'get_current_article');
+    return { mode: reg.mode, n: reg.registered.length, title: JSON.parse(await mc.executeTool(t, {})).title, loaded: performance.getEntriesByType('navigation')[0].loadEventEnd > 0 };
+  });
+  assert.deepEqual(cdn, [POLYFILL]);
+  assert.equal(r.mode, 'native');
+  assert.ok(r.n >= 9);
+  assert.equal(r.title, 'Search without a server');
+  assert.ok(r.loaded, 'the polyfill waits for the load event');
+  assert.deepEqual(errors, []);
+});
+
+test('a blocked polyfill (CSP, offline) degrades quietly: mode none, tools callable, no page errors', async () => {
+  const { page, errors, cdn } = await open(plain, 'posts/search-without-a-server/', { block: true });
+  const r = await page.evaluate(async () => ({ mode: (await window.AgentProse.instance.ready).mode, title: (await window.AgentProse.instance.call('get_current_article')).title }));
+  assert.deepEqual(r, { mode: 'none', title: 'Search without a server' });
+  assert.deepEqual(cdn, [POLYFILL]);
+  assert.deepEqual(errors, []);
+});
+
+test('a page that already has WebMCP (native, @mcp-b/global, an extension) gets no polyfill', async () => {
+  const init = () => {
+    const tools = [];
+    document.modelContext = { registerTool: async (t) => void tools.push(t), getTools: async () => tools };
+  };
+  const { page, cdn } = await open(plain, 'posts/search-without-a-server/', { init });
+  const r = await page.evaluate(async () => ({ mode: (await window.AgentProse.instance.ready).mode, n: (await document.modelContext.getTools()).length }));
+  assert.equal(r.mode, 'native');
+  assert.ok(r.n >= 9);
+  assert.deepEqual(cdn, []);
 });
 
 test('inspector panel lists the tools and runs one', async () => {
@@ -215,9 +264,8 @@ test('CLI-built index: agentprose.json answers search and post bodies load from 
   assert.ok(!reqs.some((r) => r.endsWith('sitemap.xml')), 'no sitemap crawl when an index exists');
 });
 
-test('opt-in MCP-B polyfill (data-polyfill) supplies document.modelContext in browsers without WebMCP', async (t) => {
-  const online = await fetch('https://unpkg.com/@mcp-b/webmcp-polyfill@6.0.3/package.json').then((r) => r.ok).catch(() => false);
-  if (!online) return t.skip('offline: polyfill CDN unreachable');
+test('explicit data-polyfill (the 0.1.0 opt-in) still supplies document.modelContext in browsers without WebMCP', async (t) => {
+  if (!(await cdnOnline())) return t.skip('offline: polyfill CDN unreachable');
   mkdirSync(join(root, 'poly'), { recursive: true });
   writeFileSync(join(root, 'poly/index.html'), `<!doctype html><html><head><title>Poly</title><meta property="og:type" content="article"></head><body><article><h1>Polyfilled</h1><p>${'Text. '.repeat(30)}</p></article><script src="/agentprose.min.js" defer data-polyfill data-sitemap="false" data-llms="false"></script></body></html>`);
   const { page, errors } = await open(plain, 'poly/');

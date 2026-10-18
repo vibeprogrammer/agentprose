@@ -1,0 +1,14 @@
+{
+  "name": "agentprose-example-mcp-b-desktop",
+  "private": true,
+  "type": "module",
+  "description": "agentprose + MCP-B local relay: an end-to-end check with a real MCP client and headless Chromium",
+  "scripts": {
+    "verify": "node verify.mjs global && node verify.mjs polyfill"
+  },
+  "dependencies": {
+    "@mcp-b/webmcp-local-relay": "6.0.3",
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "playwright-core": "^1.56.0"
+  }
+}

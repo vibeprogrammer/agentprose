@@ -30,7 +30,7 @@ Everything is optional.
 | `data-cloud` | `https://agentprose.cloud` | With `data-key`: hosted analytics (`/v1/collect`) and hosted search (`/v1/search`) in one attribute. `data-cloud-search="false"` keeps search local. Optional when the script itself is served by agentprose Cloud (`https://agentprose.cloud/v/0.1.0/agentprose.min.js`): with `data-key` and no `data-cloud`, the script's origin is used. Required when loading from jsDelivr or unpkg (agentprose warns in the console if it is missing). `data-cloud="false"` turns the Cloud off. The page's own origin is never treated as a Cloud |
 | `data-key` | `pk_…` | With the Cloud: your site's public key (`pk_…`, from the agentprose Cloud dashboard; safe to publish in page HTML). With `data-adapter`: the CMS adapter's key. Also sent with `data-analytics` beacons |
 | `data-exposed-to` | `https://partner.example` | Origins of other frames allowed to see the tools (WebMCP `exposedTo`) |
-| `data-polyfill` | (flag) or a URL | Load the MCP-B WebMCP polyfill when the browser has no `document.modelContext` |
+| `data-polyfill` | `off`, or a URL | On by default: when the page has no WebMCP once it has loaded (no native `document.modelContext`, no `@mcp-b/global`, no legacy `navigator.modelContext`), load the pinned MCP-B polyfill (`@mcp-b/webmcp-polyfill@6.0.3`, jsDelivr) and register into it. `off`/`false` never loads it. A URL (anything with a `/`) self-hosts it. The 0.1.0 flag form (`data-polyfill`, `true`, `auto`) means the default |
 | `data-untrusted` | `false` | Turn off `untrustedContentHint` (only for fully trusted content) |
 | `data-inspector` | (flag) or `open` | Load the 🔌 inspector. Every page also accepts `?agentprose-inspect` |
 | `data-debug` | (flag) | Log registration results to the console |
@@ -71,7 +71,7 @@ import { createAgentTools, type Config } from 'agentprose';
 | `navigate` | `boolean` | false |
 | `untrustedContent` | `boolean` | true |
 | `legacy` | `boolean`: allow a polyfill's `navigator.modelContext` | true |
-| `polyfill` | `boolean \| string` | false |
+| `polyfill` | `boolean \| string`: `true`/`'auto'` = load the pinned MCP-B polyfill after the load event if the page has no WebMCP; a URL = that polyfill; `false` = never. The script tag defaults to on | false (npm), on (script tag) |
 | `register` | `boolean`: set false to build tools without registering (tests, SSR) | true |
 | `debug` | `boolean` | false |
 
