@@ -4,6 +4,8 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-10-18
+
 ### Added
 - **Notes for AI agents** (`agentNotes`) and **contact details** (`contact`: `email`, `phone`, `url`, `booking`, `hours`, `address`), written by the site owner. Agents get them from `get_site_info` (`notesForAgents`, `contact`) and from a new read-only tool, **`get_contact_info`**, which is registered when the page sets `contact`, `data-contact`, or uses agentprose Cloud (`data-key`). Sources, highest priority first: page config, agentprose Cloud (`/v1/site`, fetched only when an agent first asks, never on page load; `siteInfo` overrides or disables it), `agentprose.json` (`site.agentNotes`, `site.contact`). Everything is cleaned and capped, and links must be http(s). See docs/configuration.md.
 - `agentprose build --site <file.json>` publishes `name`, `description`, `lang`, `logo`, `links`, `agentNotes` and `contact` in `agentprose.json`, and warns about every field it leaves out. With `--out`, the CLI prints the `<link rel="agentprose-index">` tag to add.
