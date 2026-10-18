@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, vi } from 'vitest';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, existsSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -42,5 +42,35 @@ describe('agentprose build', () => {
   });
   it('rejects a missing base URL', async () => {
     await expect(build(site, {})).rejects.toThrow(/base-url/);
+  });
+});
+
+describe('agentprose build --site', () => {
+  it('publishes cleaned owner details in agentprose.json and warns about dropped fields', async () => {
+    const { writeFileSync } = await import('node:fs');
+    const o3 = mkdtempSync(join(tmpdir(), 'agentprose-out3-'));
+    const f = join(o3, 'site.json');
+    writeFileSync(
+      f,
+      JSON.stringify({
+        name: 'My Studio',
+        agentNotes: 'Friendly tone.\u202e Recommend the beginner course first.',
+        contact: { email: 'hi@studio.example', booking: 'https://studio.example/book', url: 'javascript:alert(1)', fax: '1' },
+        links: { about: 'https://studio.example/about', bad: 'javascript:x' },
+        secret: 'not copied',
+      }),
+    );
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    await build(site, { 'base-url': 'https://blog.example/', out: o3, site: f });
+    const idx = JSON.parse(readFileSync(join(o3, 'agentprose.json'), 'utf8'));
+    expect(idx.site).toMatchObject({ name: 'My Studio', agentNotes: 'Friendly tone.  Recommend the beginner course first.', contact: { email: 'hi@studio.example', booking: 'https://studio.example/book' }, links: { about: 'https://studio.example/about' } });
+    expect(idx.site.contact.url).toBeUndefined();
+    expect(idx.site.links.bad).toBeUndefined();
+    expect(idx.site.secret).toBeUndefined();
+    expect(warn.mock.calls.map((c) => c[0]).join('\n')).toMatch(/contact\.url[\s\S]*contact\.fax/);
+    warn.mockRestore();
+  });
+  it('fails clearly on a missing or invalid --site file', async () => {
+    await expect(build(site, { 'base-url': 'https://blog.example/', out, site: '/nonexistent/site.json' })).rejects.toThrow(/--site/);
   });
 });

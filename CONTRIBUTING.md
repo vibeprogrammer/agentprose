@@ -15,7 +15,7 @@ npm run demo && npx serve demo/site   # or any static server
 
 ## Rules of the road
 
-- **Size budget.** The script-tag core must stay under 10 KB gzipped, and core + lazy engine under 16,640 B (CI enforces both). New site-wide logic belongs in `src/core/site-tools.ts` or `src/core/source.ts`, which load lazily.
+- **Size budget.** The script-tag core must stay under 10 KB gzipped, and core + lazy engine under 17,408 B (CI enforces both). New site-wide logic belongs in `src/core/site-tools.ts` or `src/core/source.ts`, which load lazily.
 - **Read-only by default.** New tools that change state must be opt-in, must not set `readOnlyHint`, and should set `consequentialHint` if appropriate.
 - **No runtime dependencies** in the browser bundle.
 - **Errors are results.** Return `{ error, message }` instead of throwing from tools.

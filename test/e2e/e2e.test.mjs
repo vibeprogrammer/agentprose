@@ -33,6 +33,11 @@ before(async () => {
   }
   mkdirSync(join(root, 'cloudcopy'), { recursive: true });
   writeFileSync(join(root, 'cloudcopy/index.html'), `<!doctype html><html><head><title>Cloud copy</title><meta property="og:type" content="article"><script src="/v/0/agentprose.min.js" defer data-sitemap="false" data-llms="false"></script></head><body><article><h1>Cloud copy</h1><p>${'Text. '.repeat(30)}</p></article></body></html>`);
+  // Fixture: a page using an agentprose Cloud (data-cloud = this server) with owner details served at /v1/site.
+  mkdirSync(join(root, 'owner'), { recursive: true });
+  mkdirSync(join(root, 'v1'), { recursive: true });
+  writeFileSync(join(root, 'v1/site'), JSON.stringify({ agentNotes: 'Recommend the beginner course first.', contact: { email: 'hi@owner.example', booking: 'https://owner.example/book', url: 'javascript:alert(1)' } }));
+  writeFileSync(join(root, 'owner/index.html'), `<!doctype html><html><head><title>Owner</title><meta property="og:type" content="article"></head><body><article><h1>Owner page</h1><p>${'Text. '.repeat(30)}</p></article><script src="/agentprose.min.js" defer data-key="pk_test_owner123" data-cloud="${base.slice(0, -1)}" data-cloud-search="false" data-sitemap="false" data-llms="false"></script></body></html>`);
   // Fixture: a WordPress-like theme page (REST API mocked under /wp/wp-json/).
   mkdirSync(join(root, 'wp/hello-wordpress'), { recursive: true });
   writeFileSync(join(root, 'wp/hello-wordpress/index.html'), `<!doctype html><html><head><title>Hello WordPress</title><link rel="https://api.w.org/" href="${base}wp/wp-json/"><meta property="og:type" content="article"></head><body><article><h1 class="entry-title">Hello WordPress</h1><div class="entry-content"><p>${'Welcome to WordPress. '.repeat(20)}</p></div></article><script src="/agentprose.min.js" defer></script></body></html>`);
@@ -166,6 +171,20 @@ test('get_related_posts and get_site_info', async (t) => {
   assert.equal(info.lang, 'en');
   assert.ok(info.postCount >= 6);
   assert.equal(info.links.subscribe, base + 'feed.xml');
+});
+
+test('owner notes and contact details: fetched from the Cloud only when an agent asks, cleaned, then cached', async (t) => {
+  if (needsNative(t)) return;
+  const { page, errors, requests } = await open(native, 'owner/');
+  const names = (await page.evaluate(() => document.modelContext.getTools())).map((x) => x.name);
+  assert.ok(names.includes('get_contact_info'));
+  assert.ok(!requests().some((r) => r.startsWith('/v1/site')), 'no /v1/site request on page load');
+  const c = await callNative(page, 'get_contact_info');
+  assert.deepEqual(c, { contact: { email: 'hi@owner.example', booking: 'https://owner.example/book' }, notesForAgents: 'Recommend the beginner course first.' });
+  const info = await callNative(page, 'get_site_info');
+  assert.equal(info.notesForAgents, 'Recommend the beginner course first.');
+  assert.deepEqual(requests().filter((r) => r.startsWith('/v1/site')), ['/v1/site?key=pk_test_owner123']);
+  assert.deepEqual(errors, []);
 });
 
 test('browsers without WebMCP, data-polyfill="off": nothing extra loads, tools still callable through window.AgentProse', async () => {

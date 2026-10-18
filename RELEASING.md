@@ -20,7 +20,7 @@ On a branch from an up-to-date `main`:
    npm ci
    npm run typecheck
    npm test                 # unit tests, incl. the polyfill pin/hash check
-   npm run build            # fails over the size budget: core 10,240 B, core+engine 16,640 B gzipped
+   npm run build            # fails over the size budget: core 10,240 B, core+engine 17,408 B gzipped
    npm run test:e2e         # headless Chromium (set CHROME=/path/to/chrome if needed)
    npm pack --dry-run       # what will be published
    ```

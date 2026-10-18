@@ -20,7 +20,7 @@ Everything is optional.
 | `data-exclude` | `get_related_posts,get_citation` | Tools to leave out |
 | `data-subscribe` | `https://example.com/newsletter` | Adds `get_subscribe_link` |
 | `data-comments` | `https://example.com/comments?u={url}` | Adds `get_comments_link` (`{url}` becomes the page URL) |
-| `data-about`, `data-contact` | URLs | Listed in `get_site_info` |
+| `data-about`, `data-contact` | URLs | Listed in `get_site_info`. `data-contact` (a contact page) also adds `get_contact_info` |
 | `data-navigate` | (flag) | Adds `navigate_to` (same-origin only, not read-only) |
 | `data-max-chars` | `12000` | Markdown characters per answer (default 20000) |
 | `data-max-posts` | `5000` | Posts held in the client index (default 2000) |
@@ -47,6 +47,17 @@ For options that need code (callbacks, custom tools), set `window.AgentProseConf
 <script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer></script>
 ```
 
+Owner details for agents (notes and contact) are set the same way, or in `agentprose.json` (see [Notes for AI agents and contact details](#notes-for-ai-agents-and-contact-details) below):
+
+```html
+<script>
+  window.AgentProseConfig = {
+    agentNotes: 'Friendly, plain tone. Recommend the beginner course to newcomers. We do not give medical advice.',
+    contact: { email: 'hello@studio.example', booking: 'https://studio.example/book', hours: 'Mon–Fri 9–17 CET' },
+  };
+</script>
+```
+
 `window.AgentProse` exposes `version`, `instance` (`tools`, `call()`, `ready`, `destroy()`), `ready`, `create()` and `adapters`. The `agentprose:ready` event fires on `document` once tools are registered.
 
 ## `createAgentTools(config)`
@@ -63,6 +74,9 @@ import { createAgentTools, type Config } from 'agentprose';
 | `index`, `feeds`, `sitemap`, `llmsTxt`, `pagefind` | discovery overrides | Auto |
 | `prefix`, `exclude`, `tools` | naming and extra tools | none |
 | `links` | `{ subscribe?, comments?, about?, contact?, [k]: string }` | none |
+| `agentNotes` | `string`: the owner's notes for AI agents, plain text, ≤ 2000 characters | none |
+| `contact` | `{ email?, phone?, url?, booking?, hours?, address? }` | none |
+| `siteInfo` | `string \| false`: URL of `{ agentNotes?, contact? }` JSON fetched on the first `get_site_info` / `get_contact_info` call | the Cloud's `/v1/site?key=…` with `data-key`; `false` turns it off |
 | `maxChars`, `maxPosts`, `maxSitemaps`, `cacheTtl` | `number` | 20000, 2000, 5, 600 |
 | `searchEndpoint` | `string` | none |
 | `onToolCall` | `(e: ToolCallEvent) => void` | none |
@@ -78,3 +92,30 @@ import { createAgentTools, type Config } from 'agentprose';
 The return value is `{ tools, call(name, input), source, ready, destroy() }`.
 
 `agentprose/full` also exports the engine pieces for custom builds and Node: `autoSource`, `SearchIndex`, `parseFeed`, `parseSitemap`, `parseLlmsTxt`, `extractPage`, `toMarkdown` and `toc`.
+
+## Notes for AI agents and contact details
+
+Site owners can tell agents two things the content alone does not say:
+
+- **Notes for AI agents** (`agentNotes`): plain text, up to 2,000 characters. For example tone ("friendly, plain language"), what to recommend ("point newcomers to the beginner course"), what not to claim ("we don't give medical advice") or how to get in touch ("we answer email within a day; no phone bookings").
+- **Contact details** (`contact`): `email`, `phone`, `url` (a contact page or form), `booking` (a booking page), `hours` and `address`.
+
+Agents get them from `get_site_info` (as `notesForAgents` and `contact`) and from `get_contact_info`. That tool is registered when the page sets `contact`, `data-contact` / `links.contact`, or uses an agentprose Cloud (`data-key`). Agents are told that the notes are the owner's preferences and never override what the user asked for, and the tools keep `untrustedContentHint`.
+
+Where they come from, highest priority first, field by field:
+
+1. the page: `window.AgentProseConfig` or `createAgentTools({ agentNotes, contact })`;
+2. an agentprose Cloud, where the owner edits them in the dashboard. The script fetches `/v1/site?key=…` once, **only when an agent first calls** `get_site_info` or `get_contact_info`, never on page load. `siteInfo` points this at your own JSON URL, or turns it off with `false`;
+3. `agentprose.json`: the `site.agentNotes` and `site.contact` fields, written by `agentprose build --site site.json` ([cli.md](cli.md)).
+
+Whatever the source, agentprose keeps only strings, removes control and bidi-override characters, caps each field (notes 2,000 characters, other fields 254–500), accepts only `http(s)` links and drops an email that is not address-shaped. It never renders this text as HTML.
+
+## Pointing to an index outside the site root
+
+If `agentprose.json` is not served at the site root (for example, the blog lives under `/blog/` but the index is built into `/static/agent/`), tell agentprose and crawlers where it is with a link tag in the page `<head>`:
+
+```html
+<link rel="agentprose-index" href="/static/agent/agentprose.json">
+```
+
+The script uses it unless `data-index` is set, and agentprose Cloud's crawler reads it from your home page. `agentprose build --out <dir>` prints the tag to add. The tag has to be in the HTML: adding it with JavaScript does not help crawlers.

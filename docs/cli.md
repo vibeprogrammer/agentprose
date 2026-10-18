@@ -37,8 +37,25 @@ It uses the same extraction code as the browser. Pages count as articles when th
 | `--all` | Index every page, not only articles (docs sites) |
 | `--inline` | Put Markdown inside `agentprose.json` (small sites, one request) |
 | `--content <selector>` | Article body selector |
+| `--site <file.json>` | Site details to publish in `agentprose.json`: `name`, `description`, `lang`, `logo`, `links`, `agentNotes` and `contact` (see below) |
 
-The script finds `/agentprose.json` on its own. If your site lives under a sub-path, add `data-base="https://example.com/blog/"` to the script tag.
+The script finds `/agentprose.json` on its own. If your site lives under a sub-path, add `data-base="https://example.com/blog/"` to the script tag. If the index is served somewhere else, add `<link rel="agentprose-index" href="/path/to/agentprose.json">` to your pages' `<head>`; with `--out`, the CLI prints the exact tag ([configuration.md](configuration.md#pointing-to-an-index-outside-the-site-root)).
+
+### Notes for AI agents and contact details (`--site`)
+
+```json
+{
+  "agentNotes": "Friendly, plain tone. Point newcomers to the beginner course. We don't give medical advice.",
+  "contact": { "email": "hello@studio.example", "booking": "https://studio.example/book", "hours": "Mon–Fri 9–17 CET" },
+  "links": { "about": "https://studio.example/about" }
+}
+```
+
+```bash
+npx agentprose build public --base-url https://studio.example/ --site agentprose.site.json
+```
+
+Only the fields above are copied. Text is cleaned the same way the browser cleans it (control characters removed, notes capped at 2,000 characters, links must be `http(s)`), and the CLI warns about every contact field it leaves out. Agents read the result through `get_site_info` and `get_contact_info` ([configuration.md](configuration.md#notes-for-ai-agents-and-contact-details)).
 
 Add it to CI after your site build:
 

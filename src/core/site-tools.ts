@@ -2,7 +2,8 @@ import type { Config, ContentAdapter, Post, PostSummary, SiteInfo } from './type
 import { extractSite } from './extract';
 import { SearchIndex } from './search';
 import { aggregate } from './source';
-import { norm, stripHtml } from './util';
+import { fetchText, norm, stripHtml } from './util';
+import { mergeOwner } from './owner';
 
 export interface SiteCtx {
   cfg: Config;
@@ -27,7 +28,38 @@ export function siteExec(ctx: SiteCtx) {
       indexP = undefined;
       throw e;
     });
+  // Owner details (notes for agents, contact) from the Cloud: fetched once, on the first call that needs them.
+  let ownerP: Promise<any> | undefined;
+  const owner = async (extra: any = {}) => {
+    const u =
+      cfg.siteInfo ??
+      (cfg.analyticsKey && /\/v1\/collect$/.test(cfg.analytics || '') && cfg.analytics!.replace(/collect$/, 'site?key=' + encodeURIComponent(cfg.analyticsKey)));
+    const cloud = await (ownerP ||= u
+      ? fetchText(new URL(u, here()).href).then((t) => {
+          try {
+            return JSON.parse(t!);
+          } catch {
+            return {};
+          }
+        })
+      : Promise.resolve({}));
+    return mergeOwner(cfg, cloud, extra);
+  };
+  const links = () => Object.fromEntries(Object.entries(cfg.links || {}).filter(([, v]) => v)) as Record<string, string>;
   return {
+    get_contact_info: async () => {
+      let extra;
+      try {
+        extra = await src.site?.();
+      } catch {
+        /* sources unavailable */
+      }
+      const o = await owner(extra);
+      const l = links();
+      return o.contact || o.notesForAgents || l.contact
+        ? { contact: o.contact, contactPage: l.contact, notesForAgents: o.notesForAgents }
+        : { error: 'not_found', message: 'No contact details published for agents.' };
+    },
     get_citation: async (i: any = {}) => {
         const p = await resolve(i);
         if (!p) return notFound(i);
@@ -116,9 +148,10 @@ export function siteExec(ctx: SiteCtx) {
           /* sources unavailable; report what the page says */
         }
         const latest = posts.map((p) => p.published).filter(Boolean).sort().pop();
-        const info: SiteInfo & Record<string, unknown> = { ...page, ...Object.fromEntries(Object.entries(extra).filter(([, v]) => v)), url: extra.url || page.url } as any;
-        const links = Object.fromEntries(Object.entries(cfg.links || {}).filter(([, v]) => v)) as Record<string, string>;
-        return { ...info, links: Object.keys(links).length ? links : undefined, postCount: posts.length || undefined, latestPost: latest, contentSource: src.name };
+        const { agentNotes, contact, notesForAgents, ...rest } = extra as any;
+        const info: SiteInfo & Record<string, unknown> = { ...page, ...Object.fromEntries(Object.entries(rest).filter(([, v]) => v)), url: extra.url || page.url } as any;
+        const l = links();
+        return { ...info, links: Object.keys(l).length ? l : undefined, ...(await owner(extra)), postCount: posts.length || undefined, latestPost: latest, contentSource: src.name };
       },
   };
 }

@@ -4,6 +4,8 @@
  * Uses document.modelContext.getTools()/executeTool() when the browser has WebMCP, otherwise calls
  * agentprose's own tool registry, so it works in every browser.
  */
+import { nativeRun } from './core/native-run';
+
 type Tool = { name: string; title?: string; description: string; inputSchema?: any; annotations?: any };
 
 const w = window as any;
@@ -13,7 +15,7 @@ async function sourceOfTools(): Promise<{ mode: string; tools: Tool[]; run: (t: 
   if (mc?.getTools) {
     try {
       const tools = await mc.getTools();
-      if (tools.length) return { mode: 'Native WebMCP (document.modelContext)', tools, run: async (t, i) => JSON.parse(await mc.executeTool(t, i)) };
+      if (tools.length) return { mode: 'Native WebMCP (document.modelContext)', tools, run: (t, i) => nativeRun(mc, t, i) };
     } catch {
       /* fall through */
     }
