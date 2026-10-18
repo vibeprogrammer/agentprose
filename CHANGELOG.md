@@ -4,13 +4,19 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-18
+
 ### Changed
 - The MCP-B WebMCP polyfill is on by default in the script-tag build. After the page's `load` event, if the page still has no WebMCP (no native `document.modelContext`, no `@mcp-b/global`, no legacy `navigator.modelContext`), agentprose loads `@mcp-b/webmcp-polyfill@6.0.3` from jsDelivr (was unpkg) and registers into it. `data-polyfill="off"` (or `false`) opts out; a URL self-hosts it; the 0.1.0 flag form still works. The npm `createAgentTools()` default is unchanged (off). A blocked or slow polyfill (CSP, offline, 10 s) settles as mode `none` without errors.
-- Core bundle unchanged in size (9,636 B gzipped, was 9,637 B): the four script loaders now share one helper.
+- Core bundle unchanged in size (9,636 B gzipped, was 9,637 B): the four script loaders are merged into one shared `addScript` helper.
 
 ### Added
 - Tutorial: [your blog inside Claude Desktop/Cursor with agentprose + MCP-B](docs/tutorials/mcp-b-claude-desktop.md), and [examples/mcp-b-desktop](examples/mcp-b-desktop/) with an end-to-end check (official MCP SDK client → `@mcp-b/webmcp-local-relay` → headless Chromium page).
+- WordPress plugin (`wordpress-plugin/`), prepared for WordPress.org: bundles the MCP-B polyfill locally (no CDN), opt-in agentprose Cloud disclosed under "External services", Plugin Check and PHPCS clean, plus WP adapter fixes for custom post types. It lives in this repository and is released separately as a WordPress plugin zip; it is not part of the npm package.
 - Tests: 7 unit tests for polyfill loading; e2e for the default polyfill, opt-out, a blocked polyfill and a page that already has WebMCP.
+
+### Fixed
+- WordPress adapter: titles, excerpts, term and site names are decoded to plain text (WordPress renders `&#8217;`, `[&hellip;]`); several post types are merged into one date-ordered page of at most `limit`.
 
 ## [0.1.0] - 2026-10-18
 

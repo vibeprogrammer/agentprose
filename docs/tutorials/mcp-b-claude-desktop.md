@@ -24,7 +24,7 @@ agentprose needs one script tag. MCP-B's embed connects the tab to the relay:
 
 agentprose loads MCP-B's WebMCP polyfill on its own in browsers that don't have WebMCP yet (after the page has loaded, about 9 KB). If your site already uses [`@mcp-b/global`](https://docs.mcp-b.ai/packages/global/overview), agentprose registers into it and loads nothing extra.
 
-> **Version note.** The built-in polyfill is in agentprose's `main` branch and ships in the next release. On agentprose **0.1.0** (what `agentprose@0.1` serves today), add MCP-B's runtime in `<head>` first: `<script src="https://cdn.jsdelivr.net/npm/@mcp-b/global@6/dist/index.iife.js"></script>`. That combination was tested end to end too (see below).
+> **Version note.** The built-in polyfill ships in agentprose **0.1.1** (`agentprose@0.1` serves it once 0.1.1 is on npm). On agentprose **0.1.0**, add MCP-B's runtime in `<head>` first: `<script src="https://cdn.jsdelivr.net/npm/@mcp-b/global@6/dist/index.iife.js"></script>`. That combination was tested end to end too (see below).
 
 **Should every visitor load the embed?** Usually not. The embed looks for a relay on `localhost` ports 9333–9348 from every visitor's browser. On a public site, Chrome asks each visitor for permission to reach their local network, and visitors without a relay see failed connections in the console. Three ways to keep it to yourself:
 
@@ -95,6 +95,6 @@ Not tested: Claude Desktop, Cursor and Claude Code themselves (the test machine 
 ## Troubleshooting
 
 - **The agent sees only the four `webmcp_*` tools.** The tab isn't connected. Reload it after the client has started (the embed retries after 10, 20 and 30 s, then every two minutes). Check that `--widget-origin` matches the page's origin exactly, and that you allowed local network access.
-- **`webmcp_list_sources` shows the tab with 0 tools.** The page has no WebMCP runtime. On agentprose 0.1.0, add `@mcp-b/global` or `data-polyfill`. On later versions, check that `data-polyfill="off"` isn't set and that your CSP allows `https://cdn.jsdelivr.net` (or self-host the polyfill: `data-polyfill="/js/webmcp-polyfill.js"`).
+- **`webmcp_list_sources` shows the tab with 0 tools.** The page has no WebMCP runtime. On agentprose 0.1.0, add `@mcp-b/global` or `data-polyfill`. On 0.1.1 and later, check that `data-polyfill="off"` isn't set and that your CSP allows `https://cdn.jsdelivr.net` (or self-host the polyfill: `data-polyfill="/js/webmcp-polyfill.js"`).
 - **`file://` pages don't work.** Serve the page over `http://localhost`, because WebMCP needs a real origin.
 - **Tool names clash with another tab.** Close the other tab, or give agentprose a prefix: `data-prefix="blog_"`.
