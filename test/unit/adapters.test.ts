@@ -38,6 +38,22 @@ describe('wordpress', () => {
   it('returns nothing for an unknown tag instead of everything', async () => {
     expect((await a.list({ tag: 'missing' })).items).toEqual([]);
   });
+  it('decodes the entities WordPress renders in titles and excerpts', async () => {
+    const m = mockFetch({
+      'https://wp.ex/wp-json/wp/v2/posts': [{ id: 1, link: 'https://wp.ex/a/', slug: 'a', title: { rendered: 'Don&#8217;t panic &#x2014; &ldquo;really&rdquo;' }, excerpt: { rendered: '<p>Short intro [&hellip;]</p>' }, date_gmt: '2026-10-01T10:00:00' }],
+    });
+    const r = await wordpress({ api: 'https://wp.ex/wp-json/', fetch: m.fetch }).list();
+    expect(r.items[0]).toMatchObject({ title: 'Don’t panic — “really”', summary: 'Short intro' });
+  });
+  it('merges several post types into one date-ordered page of at most limit items', async () => {
+    const post = (id: number, d: string) => ({ id, link: `https://wp.ex/${id}/`, slug: String(id), title: { rendered: 'P' + id }, date_gmt: d });
+    const m = mockFetch({
+      'https://wp.ex/wp-json/wp/v2/posts': [post(1, '2026-10-05T00:00:00'), post(2, '2026-10-01T00:00:00')],
+      'https://wp.ex/wp-json/wp/v2/pages': [post(3, '2026-10-03T00:00:00'), post(4, '2026-09-01T00:00:00')],
+    });
+    const r = await wordpress({ api: 'https://wp.ex/wp-json/', types: ['posts', 'pages'], fetch: m.fetch }).list({ limit: 3 });
+    expect(r.items.map((p) => p.title)).toEqual(['P1', 'P3', 'P2']);
+  });
   it('supports ?rest_route= sites without pretty permalinks', async () => {
     const m = mockFetch({ 'https://wp.ex/?': [] });
     await wordpress({ api: 'https://wp.ex/?rest_route=/', fetch: m.fetch }).list();
