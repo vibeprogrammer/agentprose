@@ -87,6 +87,7 @@
     "test:e2e": "node --test test/e2e/e2e.test.mjs",
     "demo": "node scripts/demo.mjs",
     "plugin": "node wordpress-plugin/build.mjs",
+    "wp:sync": "node wordpress-plugin/sync.mjs",
     "size": "node scripts/build.mjs",
     "prepublishOnly": "npm run typecheck && npm test && npm run build"
   },
