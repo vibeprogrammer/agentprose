@@ -1,0 +1,21 @@
+name: WordPress plugin
+on:
+  push:
+    branches: [main]
+    paths: ['wordpress-plugin/**', '.github/workflows/wordpress-plugin.yml']
+  pull_request:
+    paths: ['wordpress-plugin/**', '.github/workflows/wordpress-plugin.yml']
+permissions:
+  contents: read
+jobs:
+  phpcs:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: wordpress-plugin
+    steps:
+      - uses: actions/checkout@v4
+      - name: PHP lint (7.4+ syntax, runner PHP)
+        run: for f in $(find agentprose -name '*.php'); do php -l "$f"; done
+      - run: composer install --no-interaction --no-progress
+      - run: vendor/bin/phpcs

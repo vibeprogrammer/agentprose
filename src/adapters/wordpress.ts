@@ -81,7 +81,12 @@ export function wordpress(o: WordPressOptions): ContentAdapter {
       _fields: 'id,link,slug,title,excerpt,date,date_gmt,modified,modified_gmt,author,tags,categories,featured_media',
     };
     const res = await Promise.all(types.map((t) => get(url(t, q)).catch(() => ({ json: [], total: 0 }))));
-    const items = await Promise.all(res.flatMap((r) => r.json as any[]).map(map));
+    let items = await Promise.all(res.flatMap((r) => r.json as any[]).map(map));
+    if (types.length > 1 && !search) {
+      // One request per type: merge into one date-ordered page of at most `limit` items.
+      const t = (p: Post) => Date.parse(p.published || '') || 0;
+      items = items.sort((x, y) => (opts.sort === 'oldest' ? t(x) - t(y) : t(y) - t(x))).slice(0, perPage);
+    } else if (types.length > 1) items = items.slice(0, perPage);
     return { items, total: res.reduce((n, r) => n + (r.total || 0), 0) || undefined };
   };
   return {

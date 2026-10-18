@@ -4,4 +4,6 @@ demo/site/
 coverage/
 *.log
 .DS_Store
-wordpress-plugin/agentprose/assets/
+wordpress-plugin/agentprose/js/
+wordpress-plugin/vendor/
+wordpress-plugin/composer.lock
