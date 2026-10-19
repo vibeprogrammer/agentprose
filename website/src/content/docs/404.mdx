@@ -1,0 +1,22 @@
+---
+title: "Page not found"
+description: "This page doesn't exist. It may have moved when the docs were reorganised."
+template: splash
+editUrl: false
+lastUpdated: false
+pagefind: false
+hero:
+  title: "Nothing here, not even for agents"
+  tagline: "This page doesn't exist, or it moved. Try the search above, or start from one of these."
+---
+
+import { LinkCard, CardGrid } from '@astrojs/starlight/components';
+
+export const b = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+
+<CardGrid>
+  <LinkCard title="Home" href={b} description="What agentprose is, and the one-line install." />
+  <LinkCard title="Quick start" href={`${b}getting-started/`} description="Add it to a site in five minutes." />
+  <LinkCard title="Tool reference" href={`${b}reference/tools/`} description="Every tool, its inputs and outputs." />
+  <LinkCard title="Configuration" href={`${b}reference/configuration/`} description="Every data-* attribute and option." />
+</CardGrid>

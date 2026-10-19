@@ -1,0 +1,27 @@
+---
+title: "WordPress plugin"
+description: "Install the agentprose WordPress plugin from the zip (wordpress.org listing pending), or use the script tag."
+---
+
+import { Steps } from '@astrojs/starlight/components';
+
+<Steps>
+
+1. [Download agentprose-wordpress.zip](../../downloads/agentprose-wordpress.zip). It is built from the released plugin source and bundles the matching agentprose release plus the pinned MCP-B polyfill. The plugin is in review for wordpress.org (slug `agentprose`); once listed, search for "agentprose" under **Plugins → Add New Plugin** instead.
+2. In wp-admin: **Plugins → Add New Plugin → Upload Plugin**, choose the zip, **Install Now**.
+3. **Activate.** The tools are live on every front-end page.
+4. As an administrator, open any post and click 🔌 to see and run the tools.
+
+</Steps>
+
+Requirements: WordPress 6.3+, PHP 7.4+.
+
+Everything else (every setting, Cloud vs self-hosted, caching and CSP, uninstall, FAQ and the changelog) is in the [WordPress plugin section](../../wordpress/).
+
+## Or: the script tag
+
+Any WordPress site also works with the one-line snippet: agentprose sees `<link rel="https://api.w.org/">` and switches to the REST API on its own.
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer></script>
+```

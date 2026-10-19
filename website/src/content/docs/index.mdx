@@ -1,0 +1,143 @@
+---
+title: agentprose
+description: Make any blog or CMS readable by AI agents through WebMCP. One script tag, zero config, read-only tools to search, read, outline and cite your posts.
+template: splash
+editUrl: false
+lastUpdated: false
+head:
+  - tag: title
+    content: agentprose · Make any blog readable by AI agents (WebMCP)
+hero:
+  title: Your blog, readable by AI agents<span class="ap-dot">.</span>
+  tagline: agentprose gives every page of your site WebMCP tools that let AI agents search, read, outline and cite your posts. One script tag, zero config, read-only, about 10 KB.
+  image:
+    html: '<div class="ap-call" role="img" aria-label="An AI agent calls search_posts and get_citation on a blog and gets ranked results and a verified quote link back"><div class="ap-call__bar"><i></i><i></i><i></i><span>blog.example</span><b>document.modelContext</b></div><div class="ap-call__body"><div class="ap-call__row"><span>→</span><span><span class="k">search_posts</span>({ query: <span class="s">"cms tokens"</span> })</span></div><div class="ap-call__row res"><span>←</span><span>{ count: <span class="k">3</span>, results: [ <span class="s">"Connecting a headless CMS: which tokens are safe…"</span>, … ] }</span></div><div class="ap-call__row"><span>→</span><span><span class="k">get_citation</span>({ url, quote: <span class="s">"every credential in their config is public"</span> })</span></div><div class="ap-call__row res"><span>←</span><span>{ found: <span class="ok">true</span>, quoteUrl: <span class="s">"…/headless-cms-tokens/#:~:text=…"</span> }</span></div><div class="ap-call__row"><span class="m">//</span><span class="m">read-only · same-origin · Markdown, paged</span></div></div></div>'
+  actions:
+    - text: Get started
+      link: getting-started/
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/webmaxru/agentprose
+      icon: github
+      variant: minimal
+---
+
+import { Card, CardGrid, Tabs, TabItem, LinkButton, Aside } from '@astrojs/starlight/components';
+import pkg from '../../../../package.json';
+
+<p class="ap-eyebrow">Open source · MIT · v{pkg.version} on npm</p>
+
+<p class="ap-lead">AI assistants increasingly answer from your site instead of sending people to it. Without tools they scrape your theme's HTML and guess. With agentprose they call <code>search_posts</code>, <code>get_post</code> and <code>get_citation</code>, get clean Markdown back, and quote you with your link attached.</p>
+
+<div class="ap-stats">
+  <div><b>1 line</b><span>script tag, no build step</span></div>
+  <div><b>≈10 KB</b><span>gzipped core, deferred</span></div>
+  <div><b>14 tools</b><span>10 on by default, the rest opt-in</span></div>
+  <div><b>7 CMSs</b><span>plus feeds, sitemaps, llms.txt</span></div>
+</div>
+
+<h2 class="ap-section">Built for content, not for actions</h2>
+
+<CardGrid>
+  <Card title="Zero config" icon="rocket">
+    Reads what your site already publishes: JSON-LD, OpenGraph, `<article>`, RSS/Atom/JSON Feed, sitemaps, `llms.txt` and Pagefind. Works on Hugo, Jekyll, Astro, Eleventy, Next.js and plain HTML.
+  </Card>
+  <Card title="Full articles, paged" icon="open-book">
+    Agents get the whole post as Markdown, with sections and a table of contents. Long posts continue with `next_offset`; nothing is silently cut.
+  </Card>
+  <Card title="Citations you can check" icon="approve-check">
+    `get_citation` confirms a quote really appears in the post and returns a text-fragment link that scrolls to and highlights it.
+  </Card>
+  <Card title="Safe by default" icon="seti:lock">
+    Every built-in tool is read-only and same-origin. Content is marked untrusted, management tokens are refused, and nothing is tracked unless you ask.
+  </Card>
+  <Card title="Any CMS" icon="puzzle">
+    WordPress is detected automatically. Adapters for Ghost, Sanity, Contentful, Enonic, Strapi and Storyblok, plus proxy mode for private tokens.
+  </Card>
+  <Card title="Works in today's browsers" icon="laptop">
+    Native WebMCP where Chrome ships it, and the pinned, integrity-checked MCP-B polyfill everywhere else, so agents can find the tools now.
+  </Card>
+</CardGrid>
+
+<h2 class="ap-section">Install</h2>
+
+Pick the way your site is built. Each path registers the same tools.
+
+<Tabs syncKey="install">
+  <TabItem label="Script tag">
+    Paste into your layout's `<head>`. That's the whole install.
+
+    ```html
+    <script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer></script>
+    ```
+
+    `@0` follows every 0.x release. [Pin an exact version](reference/versioning/) if you review every change.
+  </TabItem>
+  <TabItem label="agentprose Cloud">
+    The same library served by [agentprose Cloud](https://agentprose.cloud), with agent analytics, hosted search and owner notes from a dashboard. Free for one site.
+
+    ```html
+    <script src="https://agentprose.cloud/v/0/agentprose.min.js" data-key="pk_your_site_key" defer></script>
+    ```
+
+    The `pk_…` key comes from your Cloud dashboard and is safe to publish. [More](install/cloud/)
+  </TabItem>
+  <TabItem label="npm">
+    For apps with a bundler (React, Vue, Svelte, Next.js).
+
+    ```bash
+    npm install agentprose
+    ```
+
+    ```ts
+    import { createAgentTools } from 'agentprose';
+
+    const tools = createAgentTools({ links: { subscribe: '/newsletter' } });
+    // later, e.g. on unmount: tools.destroy();
+    ```
+  </TabItem>
+  <TabItem label="WordPress">
+    Install the agentprose plugin and activate it. It serves every file from your own site (no CDN), adds a settings page and shows administrators a 🔌 tool inspector. Nothing is sent anywhere unless you connect agentprose Cloud.
+
+    [Download the plugin](downloads/agentprose-wordpress.zip) · [WordPress plugin docs](wordpress/)
+  </TabItem>
+  <TabItem label="Agent skill">
+    Let your coding agent (Claude Code, Codex, Cursor, Copilot) add agentprose the right way for your stack:
+
+    ```bash
+    npx skills add webmaxru/agentprose
+    ```
+
+    Then ask it to "make this site readable by AI agents with agentprose". [More](install/agent-skill/)
+  </TabItem>
+</Tabs>
+
+<h2 class="ap-section">Check what agents see</h2>
+
+Open any page of your site with `?agentprose-inspect` and the 🔌 inspector lists every tool and runs it, exactly as an agent would. Or ask the CLI from your terminal:
+
+```bash
+npx agentprose inspect https://your-blog.example/
+```
+
+<Aside type="tip" title="This site runs agentprose too">
+Every page here registers the tools, with an index built by `agentprose build`. Add `?agentprose-inspect` to this page's URL to see them.
+</Aside>
+
+<h2 class="ap-section">Pick your path</h2>
+
+<div class="ap-paths">
+  <a href="getting-started/"><strong>Add it to my site</strong><span>Five-minute quick start for any blog or docs site.</span></a>
+  <a href="wordpress/"><strong>I run WordPress</strong><span>Install the plugin, activate, done. Settings, Cloud and FAQ.</span></a>
+  <a href="guides/headless-cms/"><strong>My content is in a CMS</strong><span>Ghost, Sanity, Contentful, Enonic, Strapi, Storyblok.</span></a>
+  <a href="guides/cloud/"><strong>Show me what agents do</strong><span>Agent analytics and hosted search with agentprose Cloud.</span></a>
+</div>
+
+<div class="ap-cta">
+  <h2>Let agents quote you correctly</h2>
+  <p>agentprose is MIT licensed. The core, every tool, the CLI, all adapters and the WordPress plugin stay free.</p>
+  <div class="ap-cta__actions">
+    <LinkButton href="getting-started/" icon="right-arrow">Get started</LinkButton>
+    <LinkButton href="https://agentprose.cloud" variant="secondary" icon="external">Try agentprose Cloud</LinkButton>
+  </div>
+</div>

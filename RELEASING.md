@@ -82,6 +82,10 @@ It ends with lines like `@0 resolves to 0.1.2; served file: /*! agentprose v0.1.
 
 The repository moved from `vibeprogrammer/agentprose` to `webmaxru/agentprose`; GitHub redirects the old URL. `package.json` (`repository`, `bugs`) already names the new home, but npm shows a package's metadata as it was at publish time: agentprose 0.1.3 and earlier still link to `vibeprogrammer/agentprose` on npmjs.com, and their bundle banner (`/*! agentprose v0.1.3 | MIT | https://github.com/vibeprogrammer/agentprose */`) names the old URL. **The next publish updates both**: the npm page's repository and issues links, and the banner, which `scripts/build.mjs` reads from `repository.url`. Nothing else is needed for the move: releases are published from a maintainer's machine (0.1.3 carries no provenance attestation) and the workflows use no secrets. If a trusted publisher is ever set up on npmjs.com, it must name `webmaxru/agentprose`.
 
+## Documentation site (2026-10-20)
+
+The docs site at [salnikov.no/agentprose](https://salnikov.no/agentprose/) is built from `website/` (Astro + Starlight) by `.github/workflows/docs.yml` on every push to `main` that touches the docs, `src/`, the changelog or the WordPress plugin; it is not tied to npm releases. It pulls `docs/*.md`, `CHANGELOG.md`, `CONTRIBUTING.md` and this file in at build time, so edit those files, not copies. `package.json` `homepage` now points to the docs site; like the repository field, **npm shows the new homepage from the next publish** (0.1.3 still links the old demo).
+
 ## 5. Tag (optional)
 
 ```bash

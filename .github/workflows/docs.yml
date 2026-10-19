@@ -1,0 +1,130 @@
+name: Docs site → GitHub Pages
+
+# Builds the documentation site (website/, Astro + Starlight) and deploys it to GitHub Pages.
+# The site URL comes from the repository's Pages settings (actions/configure-pages), so a custom domain
+# later needs no code change. Pull requests build and check the site without deploying.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'website/**'
+      - 'docs/**'
+      - 'src/**'
+      - 'skills/**'
+      - 'wordpress-plugin/**'
+      - 'CHANGELOG.md'
+      - 'CONTRIBUTING.md'
+      - 'RELEASING.md'
+      - 'tsconfig.json'
+      - '.github/workflows/docs.yml'
+  pull_request:
+    paths:
+      - 'website/**'
+      - 'docs/**'
+      - 'src/**'
+      - 'wordpress-plugin/**'
+      - 'CHANGELOG.md'
+      - 'CONTRIBUTING.md'
+      - 'RELEASING.md'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: docs-pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # "Last updated" dates come from git history
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - id: pages
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+      - name: Site URL
+        id: url
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "site=http://localhost:4329/agentprose/" >> "$GITHUB_OUTPUT"   # PR builds are checked locally
+          else
+            echo "site=${{ steps.pages.outputs.base_url }}/" >> "$GITHUB_OUTPUT"
+          fi
+      - name: WordPress plugin zip (the released version in readme.txt, from npm)
+        run: |
+          version=$(sed -n 's/^Stable tag: *//p' wordpress-plugin/agentprose/readme.txt | tr -d '\r')
+          node wordpress-plugin/sync.mjs "$version" --keep-version
+          mkdir -p website/public/downloads
+          cp dist/wordpress/agentprose.zip website/public/downloads/agentprose-wordpress.zip
+      - run: npm ci
+        working-directory: website
+      - name: Build
+        run: npm run build
+        working-directory: website
+        env:
+          ASTRO_TELEMETRY_DISABLED: 1
+          SITE_URL: ${{ steps.url.outputs.site }}
+      - name: Check internal links and anchors
+        run: node scripts/check-links.mjs dist
+        working-directory: website
+        env:
+          SITE_URL: ${{ steps.url.outputs.site }}
+      - name: Browser check (phone + desktop, console errors, agentprose tools)
+        if: github.event_name == 'pull_request'
+        working-directory: website
+        env:
+          SITE_URL: ${{ steps.url.outputs.site }}
+        run: |
+          node scripts/serve.mjs 4329 &
+          sleep 1
+          CHROME="$(command -v google-chrome || command -v chromium)" node scripts/check-browser.mjs
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: website/dist
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  verify:
+    # Checks the live site after the deploy: phone + desktop, no console errors, agentprose's own tools answer.
+    if: github.event_name != 'pull_request'
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - run: npm ci
+        working-directory: website
+      - name: Browser check on the live site
+        working-directory: website
+        env:
+          SITE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: |
+          sleep 20   # let the Pages CDN pick up the new deployment
+          CHROME="$(command -v google-chrome || command -v chromium)" node scripts/check-browser.mjs
