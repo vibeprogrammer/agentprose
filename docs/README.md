@@ -1,5 +1,7 @@
 # agentprose documentation
 
+These pages are also published, with search, guides and an API reference, at **[salnikov.no/agentprose](https://salnikov.no/agentprose/)**.
+
 - [Getting started](getting-started.md): install in one line, verify with the inspector
 - [Configuration](configuration.md): every `data-*` attribute and `createAgentTools()` option
 - [Tools](tools.md): the tool reference with input schemas and example outputs

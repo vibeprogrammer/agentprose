@@ -1,0 +1,78 @@
+---
+title: "Quick start"
+description: "Add agentprose to any site in one line, check what agents see with the inspector, and try it with a real WebMCP agent."
+---
+
+import { Steps, Tabs, TabItem, LinkCard, CardGrid } from '@astrojs/starlight/components';
+
+Five minutes, no build step. You need a site served over HTTPS (or `localhost`).
+
+<Steps>
+
+1. **Add the script.** Put this in your site's `<head>` (or before `</body>`):
+
+   ```html
+   <script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer></script>
+   ```
+
+   `agentprose@0` follows the latest 0.x release, so your site gets fixes without touching the tag. Where the tag goes for your generator:
+
+   | Generator | File |
+   |---|---|
+   | Hugo | `layouts/partials/head.html` or your theme's head partial |
+   | Jekyll | `_includes/head.html` |
+   | Astro | your base layout's `<head>` (with `is:inline`) |
+   | Eleventy | your base layout |
+   | Next.js | `<Script strategy="afterInteractive">` in `app/layout.tsx` |
+   | Ghost | Settings → Code injection → Site header |
+   | WordPress | the [plugin](../install/wordpress/), or the tag in your theme |
+
+   Copy-paste versions for each are in [Static site generators](../guides/static-sites/).
+
+2. **Check what agents see.** Open any page with `?agentprose-inspect` added to the URL. The 🔌 panel lists every tool; fill in the inputs and press **Run**. It works in every browser: with native WebMCP it calls `document.modelContext.executeTool()`, otherwise it calls agentprose directly.
+
+   From a terminal, the CLI gives an agent-readiness report for any URL:
+
+   ```bash
+   npx agentprose inspect https://example.com/a-post/
+   ```
+
+3. **Try it with a real agent.** In Chrome, enable `chrome://flags/#enable-webmcp-testing` and restart. Open your site, then in DevTools:
+
+   ```js
+   const tools = await document.modelContext.getTools();
+   tools.map((t) => t.name);
+   await document.modelContext.executeTool(tools.find((t) => t.name === 'search_posts'), { query: 'pricing' });
+   ```
+
+   Agents that support WebMCP see the same tools. To use them from Claude Desktop, Cursor or Claude Code, follow [the MCP-B guide](../guides/mcp-b-claude-desktop/).
+
+4. **Optional: tune it.** Everything is optional, and set with `data-*` attributes on the same tag:
+
+   ```html
+   <script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer
+           data-content=".post-body"
+           data-subscribe="https://example.com/newsletter"
+           data-contact="https://example.com/contact"></script>
+   ```
+
+   Every attribute is in the [configuration reference](../reference/configuration/).
+
+5. **Optional: big archives.** Feed and sitemap discovery handles a few thousand posts well. For larger sites, or full-text search instead of feed excerpts, generate an index at build time:
+
+   ```bash
+   npx agentprose build public --base-url https://example.com/
+   ```
+
+   Deploy the generated `agentprose.json` and `agentprose/` folder with the site. See [Large archives](../guides/large-archives/).
+
+</Steps>
+
+## Other ways to install
+
+<CardGrid>
+  <LinkCard title="agentprose Cloud snippet" href="../install/cloud/" description="Same script, plus agent analytics and hosted search." />
+  <LinkCard title="npm package" href="../install/npm/" description="createAgentTools() for apps with a bundler." />
+  <LinkCard title="WordPress plugin" href="../install/wordpress/" description="Install, activate, done." />
+  <LinkCard title="Agent skill" href="../install/agent-skill/" description="Let your coding agent add it for you." />
+</CardGrid>

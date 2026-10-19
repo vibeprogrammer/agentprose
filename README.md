@@ -6,12 +6,13 @@
 
 agentprose turns the content your site already publishes into read-only [WebMCP](https://webmachinelearning.github.io/webmcp/) tools. Agents in the browser can read the current article, search the archive, open a section and cite you accurately, so they don't have to scrape your HTML.
 
-[Live demo](https://vibeprogrammer.github.io/agentprose-demo/) · [Docs](docs/) · [Tools](docs/tools.md) · [Adapters](docs/adapters.md) · [CLI](docs/cli.md) · [Security](SECURITY.md) · [agentprose Cloud](https://agentprose.cloud)
+**[Documentation](https://salnikov.no/agentprose/)** · [Live demo](https://vibeprogrammer.github.io/agentprose-demo/) · [WordPress plugin](https://salnikov.no/agentprose/wordpress/) · [Tools](docs/tools.md) · [Adapters](docs/adapters.md) · [CLI](docs/cli.md) · [Security](SECURITY.md) · [agentprose Cloud](https://agentprose.cloud)
 
 [![npm version](https://img.shields.io/npm/v/agentprose?color=4338ca&label=npm)](https://www.npmjs.com/package/agentprose)
 [![License: MIT](https://img.shields.io/badge/license-MIT-34d399)](LICENSE)
 [![Core size](https://img.shields.io/badge/core-9.4%20KB%20gzipped-4338ca)](#performance--safety)
 [![CI](https://github.com/webmaxru/agentprose/actions/workflows/ci.yml/badge.svg)](https://github.com/webmaxru/agentprose/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/badge/docs-salnikov.no%2Fagentprose-4338ca)](https://salnikov.no/agentprose/)
 
 `0 runtime dependencies in the browser` · `read-only tools` · `works on any site`
 
@@ -30,6 +31,8 @@ agentprose turns the content your site already publishes into read-only [WebMCP]
 ```
 
 That's the whole install. agentprose needs no build step, no backend, no account and no configuration.
+
+📖 **Full documentation: [salnikov.no/agentprose](https://salnikov.no/agentprose/)**: quick start, every install path (CDN, agentprose Cloud, npm, WordPress, agent skill), concepts, guides per platform and the generated API reference.
 
 ![The agentprose demo blog with the inspector panel listing its WebMCP tools](docs/assets/demo.png)
 
@@ -141,7 +144,7 @@ This writes `agentprose.json` (metadata and a search excerpt per post), one `age
 | Platform | How | Credentials in the page |
 |---|---|---|
 | Static sites (Hugo, Jekyll, Astro, Eleventy, Next.js export, Gatsby, Docusaurus, plain HTML) | One line, plus the CLI for large archives | none |
-| **WordPress** | Auto-detected, or the [ready plugin](wordpress-plugin/) | none (public REST API) |
+| **WordPress** | Auto-detected, or the ready plugin ([docs](https://salnikov.no/agentprose/wordpress/), [source](wordpress-plugin/)) | none (public REST API) |
 | **Ghost** | `data-adapter="ghost" data-key="…"` | Content API key ([public by design](https://docs.ghost.org/content-api)) |
 | **Sanity** | `data-adapter="sanity" data-project="…"` | none for public datasets (API CDN + GROQ) |
 | **Contentful** | `data-adapter="contentful" data-space="…" data-token="…"` | Delivery API token (published content only) |

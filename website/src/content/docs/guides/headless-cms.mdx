@@ -1,0 +1,97 @@
+---
+title: "Headless CMS"
+description: "Connect agentprose to Sanity, Contentful, Enonic XP, Strapi or Storyblok with a public credential, field mapping, or proxy mode for private content."
+---
+
+import { Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+When your posts live in a headless CMS, an adapter lets agents search and read them straight from the CMS's delivery API. Pick yours, replace the placeholders, and paste the tag into your site's layout.
+
+<Aside type="caution" title="Only public credentials in the page">
+Tools run in the visitor's browser, so anything in the tag is public. Use the vendor's public/delivery credential shown below, or [proxy mode](../proxy/). agentprose refuses management tokens.
+</Aside>
+
+<Tabs syncKey="cms">
+<TabItem label="Sanity">
+
+Public dataset; add your site's origin to the project's CORS origins, without credentials.
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer
+        data-adapter="sanity" data-project="abc123" data-dataset="production"
+        data-type="post" data-url-pattern="/blog/{slug}/"></script>
+```
+
+Search uses GROQ `match` with `score()`.
+
+</TabItem>
+<TabItem label="Contentful">
+
+Content Delivery API token only.
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer
+        data-adapter="contentful" data-space="xxxx" data-token="CDA_TOKEN"
+        data-content-type="blogPost" data-url-pattern="/blog/{slug}/"></script>
+```
+
+Search uses the CDA `query=` parameter.
+
+</TabItem>
+<TabItem label="Enonic XP">
+
+A public Guillotine endpoint.
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer
+        data-adapter="enonic" data-endpoint="https://example.com/site/myproject/master"
+        data-content-type="com.example.myapp:article" data-site-key="/mysite"></script>
+```
+
+Search uses the Query DSL `fulltext`.
+
+</TabItem>
+<TabItem label="Strapi">
+
+Strapi 5 or 4, with the Public role allowed `find` and `findOne` on the collection. No token.
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer
+        data-adapter="strapi" data-api="https://cms.example.com"
+        data-collection="articles" data-url-pattern="/blog/{slug}/"></script>
+```
+
+</TabItem>
+<TabItem label="Storyblok">
+
+The public access token.
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer
+        data-adapter="storyblok" data-token="PUBLIC_TOKEN" data-starts-with="blog/"></script>
+```
+
+</TabItem>
+</Tabs>
+
+`data-url-pattern` tells agentprose where each entry lives on your site, so agents get links to your pages, not to the CMS.
+
+## Field mapping with npm
+
+When your content model uses other field names, map them with the npm API:
+
+```ts
+import { createAgentTools } from 'agentprose';
+import { contentful } from 'agentprose/adapters/contentful';
+
+createAgentTools({
+  adapter: contentful({
+    space: 'xxxx',
+    accessToken: 'CDA_TOKEN',
+    contentType: 'article',
+    fields: { body: 'content', published: 'date', author: 'writer' },
+  }),
+});
+```
+
+Every adapter's options are in the [adapter reference](../../reference/adapters/).

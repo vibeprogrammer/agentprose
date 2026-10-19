@@ -139,7 +139,7 @@ export function parseSitemap(text: string, base: string): SitemapResult {
   return out;
 }
 
-/** Parses llms.txt (https://llmstxt.org): "# Title", "> summary", "- [name](url): notes". */
+/** Parses llms.txt (https://llmstxt.org): `# Title`, `> summary`, `- [name](url): notes`. */
 export function parseLlmsTxt(text: string, base: string): { name?: string; description?: string; links: PostSummary[] } {
   const name = text.match(/^#\s+(.+)$/m)?.[1]?.trim();
   const description = text.match(/^>\s+(.+)$/m)?.[1]?.trim();

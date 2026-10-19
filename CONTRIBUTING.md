@@ -22,6 +22,22 @@ npm run demo && npx serve demo/site   # or any static server
 - **Tests.** Every feature needs a unit test. Anything that touches registration, discovery or the DOM also needs an e2e test.
 - **Docs.** Update `docs/` and, when tool definitions change, run `node scripts/docs-tools.mjs`.
 
+## Documentation site
+
+The site at [salnikov.no/agentprose](https://salnikov.no/agentprose/) lives in `website/` (Astro + Starlight). Most of its reference pages are pulled from `docs/*.md`, `CHANGELOG.md`, `CONTRIBUTING.md`, `RELEASING.md` and the WordPress plugin's `readme.txt` at build time, and the API reference is generated from `src/` by TypeDoc, so edit those sources rather than the generated files. Hand-written pages are in `website/src/content/docs/`.
+
+```bash
+cd website
+npm install
+npm run dev                  # http://localhost:4321/agentprose/
+npm run build                # dist/, with the agentprose index for this site
+npm run check:links          # every internal link and #anchor in dist/, under the base path
+SITE_URL=http://localhost:4329/agentprose/ npm run build && npm run serve &   # then:
+SITE_URL=http://localhost:4329/agentprose/ CHROME=/path/to/chrome npm run check:browser
+```
+
+The site URL (origin and base path) is one value, `SITE_URL`; the Pages workflow sets it from the repository's Pages settings.
+
 ## Adapters
 
 New CMS adapters live in `src/adapters/<name>.ts`. They export a factory and `fromAttributes(dataset)`, use only browser-safe credentials (or proxy mode), call `guardToken()` on any token, and come with a mocked-fetch test in `test/unit/adapters.test.ts`. Cite the vendor's API docs in `docs/adapters.md`.

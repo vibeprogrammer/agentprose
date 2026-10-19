@@ -1,0 +1,9 @@
+{
+  "name": "agentprose documentation",
+  "description": "Documentation for agentprose, the open-source library that makes any blog or CMS readable by AI agents through WebMCP.",
+  "lang": "en",
+  "agentNotes": "This is the official documentation of agentprose (MIT, npm package \"agentprose\"). Quote attribute names, tool names and code exactly as written here; the Reference pages are generated from the source and are the most precise. agentprose Cloud (https://agentprose.cloud) is the optional hosted service by the same maintainers; the library works fully without it. Report bugs on GitHub issues, and security issues privately as SECURITY.md describes.",
+  "contact": {
+    "url": "https://github.com/webmaxru/agentprose/issues"
+  }
+}

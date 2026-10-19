@@ -1,0 +1,131 @@
+---
+title: "Static site generators"
+description: "Copy-paste agentprose setups for Hugo, Jekyll, Astro, Eleventy and plain HTML, plus a build-time index in CI."
+---
+
+import { Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+Static sites are agentprose's home ground: themes already emit JSON-LD, OpenGraph, a feed and a sitemap, which agentprose reads without configuration. Add the tag to the shared layout, and optionally build an index after the site build.
+
+<Tabs syncKey="ssg">
+<TabItem label="Hugo">
+
+Create `layouts/partials/agentprose.html`:
+
+```html
+{{- /* agentprose: agent-readable content via WebMCP */ -}}
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer
+  {{- with site.Params.newsletter }} data-subscribe="{{ . }}"{{ end }}
+  {{- if ne (urls.Parse site.BaseURL).Path "/" }} data-base="{{ site.BaseURL }}"{{ end }}></script>
+```
+
+Call it from your head partial:
+
+```html
+{{ partial "agentprose.html" . }}
+```
+
+Optional: index the built site in CI.
+
+```yaml
+# .github/workflows/deploy.yml (excerpt)
+- run: hugo --minify
+- run: npx agentprose build public --base-url "${{ vars.SITE_URL }}" --llms
+```
+
+</TabItem>
+<TabItem label="Jekyll">
+
+Create `_includes/agentprose.html` and include it from `_includes/head.html` with `{% include agentprose.html %}`:
+
+```liquid
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer
+  {% if site.newsletter %}data-subscribe="{{ site.newsletter }}"{% endif %}
+  {% if site.baseurl != '' %}data-base="{{ site.url }}{{ site.baseurl }}/"{% endif %}></script>
+```
+
+For a prebuilt index:
+
+```bash
+bundle exec jekyll build && npx agentprose build _site --base-url https://example.com/
+```
+
+</TabItem>
+<TabItem label="Astro">
+
+In your base layout. `is:inline` keeps Astro from bundling the CDN script:
+
+```astro
+---
+const { title } = Astro.props;
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer data-subscribe="/newsletter"></script>
+  </head>
+  <body><slot /></body>
+</html>
+```
+
+If the site uses Pagefind (Starlight does), agentprose detects it and uses it for `search_posts`. Postbuild index in `package.json`:
+
+```json
+{ "scripts": { "postbuild": "agentprose build dist --base-url https://example.com/" } }
+```
+
+</TabItem>
+<TabItem label="Eleventy">
+
+In `_includes/base.njk`:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer></script>
+```
+
+In `package.json`:
+
+```json
+{ "scripts": { "build": "eleventy", "postbuild": "agentprose build _site --base-url https://example.com/ --llms" } }
+```
+
+</TabItem>
+<TabItem label="Plain HTML">
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>My post</title>
+  <link rel="alternate" type="application/rss+xml" href="/feed.xml">
+  <script type="application/ld+json">
+  { "@context": "https://schema.org", "@type": "BlogPosting", "headline": "My post", "datePublished": "2026-10-17", "author": { "@type": "Person", "name": "Me" } }
+  </script>
+  <!-- The whole install: -->
+  <script src="https://cdn.jsdelivr.net/npm/agentprose@0/dist/agentprose.min.js" defer data-subscribe="https://example.com/newsletter"></script>
+</head>
+<body>
+  <article>
+    <h1>My post</h1>
+    <p>Agents can now read this, search the rest of the site and cite it.</p>
+  </article>
+</body>
+</html>
+```
+
+</TabItem>
+</Tabs>
+
+## Make extraction reliable
+
+- Keep (or add) **Article/BlogPosting JSON-LD** or `og:type=article` on post pages. That's how agentprose and `agentprose build` tell posts from listings.
+- If the wrong element is picked as the article body, set `data-content=".post-body"`; strip boxes with `data-ignore=".newsletter-box,.toc"`.
+- If the blog lives under a sub-path, set `data-base` (the Hugo and Jekyll partials above do it for you).
+
+<Aside type="tip">
+Docs sites (like this one) are not "articles". Build their index with `agentprose build dist --all` to include every page.
+</Aside>
+
+Other examples in the repository: [examples/](https://github.com/webmaxru/agentprose/tree/main/examples).

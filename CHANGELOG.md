@@ -4,7 +4,11 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added
+- Documentation site at [salnikov.no/agentprose](https://salnikov.no/agentprose/) (Astro + Starlight, `website/`), deployed to GitHub Pages by `.github/workflows/docs.yml`: quick start, every install path, concepts, platform guides, a WordPress plugin section, and an API reference generated from the TypeScript source. The site runs agentprose on its own pages, with an index built by `agentprose build`.
+
 ### Changed
+- `package.json` `homepage` points to the documentation site (npm shows it from the next release).
 - The repository moved to [github.com/webmaxru/agentprose](https://github.com/webmaxru/agentprose) (the old `vibeprogrammer/agentprose` URL redirects). `package.json` `repository` and `bugs`, the bundle banner, the docs and the agent skill command (`npx skills add webmaxru/agentprose`) name the new home; npm shows it from the next release.
 
 ## [0.1.3] - 2026-10-18
