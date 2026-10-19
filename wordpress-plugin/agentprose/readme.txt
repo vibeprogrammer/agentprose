@@ -33,13 +33,13 @@ How it works:
 * In browsers without built-in WebMCP, the plugin loads the bundled [MCP-B](https://docs.mcp-b.ai/) WebMCP polyfill from your own site after the page has loaded, so agents that use it (for example the MCP-B browser extension) can see the tools. You can switch this off.
 * Administrators get a small 🔌 inspector on the front end to list and try every tool.
 
-The same library works on any site, not only WordPress (Ghost, Sanity, Contentful, Strapi, Storyblok, Enonic, static sites): see [the agentprose repository](https://github.com/vibeprogrammer/agentprose).
+The same library works on any site, not only WordPress (Ghost, Sanity, Contentful, Strapi, Storyblok, Enonic, static sites): see [the agentprose repository](https://github.com/webmaxru/agentprose).
 
 **Optional: agentprose Cloud.** Enter a site key from [agentprose Cloud](https://agentprose.cloud) to see which agents used which tools and what they searched for, and to answer agent searches from a hosted index. It is off by default; see "External services" below.
 
 = Source code =
 
-The JavaScript files in `js/` are the browser build of the [agentprose](https://www.npmjs.com/package/agentprose) npm release named in the changelog, unchanged. They are built from the TypeScript source at [github.com/vibeprogrammer/agentprose](https://github.com/vibeprogrammer/agentprose) (MIT licence); `npm ci && npm run build` rebuilds them, and `node wordpress-plugin/sync.mjs <version>` copies a release into the plugin. The bundled WebMCP polyfill in `js/vendor/` is [@mcp-b/webmcp-polyfill](https://github.com/WebMCP-org/npm-packages/tree/main/packages/webmcp-polyfill) 6.0.3 (MIT), unchanged.
+The JavaScript files in `js/` are the browser build of the [agentprose](https://www.npmjs.com/package/agentprose) npm release named in the changelog, unchanged. They are built from the TypeScript source at [github.com/webmaxru/agentprose](https://github.com/webmaxru/agentprose) (MIT licence); `npm ci && npm run build` rebuilds them, and `node wordpress-plugin/sync.mjs <version>` copies a release into the plugin. The bundled WebMCP polyfill in `js/vendor/` is [@mcp-b/webmcp-polyfill](https://github.com/WebMCP-org/npm-packages/tree/main/packages/webmcp-polyfill) 6.0.3 (MIT), unchanged.
 
 == External services ==
 
@@ -113,7 +113,7 @@ All tools are read-only and use only public data from your REST API: what any vi
 == Changelog ==
 
 = 0.1.1 =
-* Bundles [agentprose 0.1.1](https://github.com/vibeprogrammer/agentprose/blob/main/CHANGELOG.md) and the MCP-B WebMCP polyfill 6.0.3, served from your site.
+* Bundles [agentprose 0.1.1](https://github.com/webmaxru/agentprose/blob/main/CHANGELOG.md) and the MCP-B WebMCP polyfill 6.0.3, served from your site.
 
 = 0.1.0 =
 * First release on WordPress.org: read-only WebMCP tools for posts, pages and custom post types; settings page; bundled MCP-B WebMCP polyfill (served locally, can be switched off); optional agentprose Cloud (analytics and hosted search).

@@ -30,10 +30,10 @@
   "homepage": "https://vibeprogrammer.github.io/agentprose-demo/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vibeprogrammer/agentprose.git"
+    "url": "git+https://github.com/webmaxru/agentprose.git"
   },
   "bugs": {
-    "url": "https://github.com/vibeprogrammer/agentprose/issues"
+    "url": "https://github.com/webmaxru/agentprose/issues"
   },
   "type": "module",
   "main": "./dist/index.js",

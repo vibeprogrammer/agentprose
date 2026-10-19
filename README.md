@@ -11,7 +11,7 @@ agentprose turns the content your site already publishes into read-only [WebMCP]
 [![npm version](https://img.shields.io/npm/v/agentprose?color=4338ca&label=npm)](https://www.npmjs.com/package/agentprose)
 [![License: MIT](https://img.shields.io/badge/license-MIT-34d399)](LICENSE)
 [![Core size](https://img.shields.io/badge/core-9.4%20KB%20gzipped-4338ca)](#performance--safety)
-[![CI](https://github.com/vibeprogrammer/agentprose/actions/workflows/ci.yml/badge.svg)](https://github.com/vibeprogrammer/agentprose/actions/workflows/ci.yml)
+[![CI](https://github.com/webmaxru/agentprose/actions/workflows/ci.yml/badge.svg)](https://github.com/webmaxru/agentprose/actions/workflows/ci.yml)
 
 `0 runtime dependencies in the browser` · `read-only tools` · `works on any site`
 
@@ -233,7 +233,7 @@ Learn which posts agents read, what they search for and what comes up empty. Sea
 `skills/agentprose/` is an agent skill: it teaches Claude Code, Codex, Cursor, Copilot and other coding agents to add agentprose to a site the right way (pick the install path for the CMS or generator, add the tag, build the index, verify with `agentprose inspect`). Install it with:
 
 ```bash
-npx skills add vibeprogrammer/agentprose
+npx skills add webmaxru/agentprose
 ```
 
 ## Development

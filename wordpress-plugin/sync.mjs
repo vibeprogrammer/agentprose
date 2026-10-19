@@ -176,7 +176,7 @@ writeFileSync(php, p);
 let r = readFileSync(readme, 'utf8');
 r = swap(r, /^Stable tag: .+$/m, `Stable tag: ${pluginVersion}`, 'Stable tag in readme.txt');
 r = r.replace(/(webmcp-polyfill\)\s+)\d+\.\d+\.\d+/, `$1${polyVersion}`);
-const lib = `[agentprose ${version}](https://github.com/vibeprogrammer/agentprose/blob/main/CHANGELOG.md)`;
+const lib = `[agentprose ${version}](https://github.com/webmaxru/agentprose/blob/main/CHANGELOG.md)`;
 if (!r.includes(`\n= ${pluginVersion} =\n`)) {
   const lines = [`* Bundles ${lib}${polyVersion ? ` and the MCP-B WebMCP polyfill ${polyVersion}` : ''}, served from your site.`, ...opt.notes.map((n) => `* ${n}`)];
   r = swap(r, /(== Changelog ==\n\n)/, `$1= ${pluginVersion} =\n${lines.join('\n')}\n\n`, 'the Changelog section');
