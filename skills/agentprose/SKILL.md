@@ -6,7 +6,7 @@ license: MIT
 
 # agentprose
 
-agentprose gives a site read-only WebMCP tools (`search_posts`, `get_post`, `get_current_article`, `get_citation`, `get_site_info`, …) from one script tag. It reads the page, feeds, sitemap, `llms.txt`, an optional prebuilt `agentprose.json`, or a CMS API. Docs: https://github.com/vibeprogrammer/agentprose
+agentprose gives a site read-only WebMCP tools (`search_posts`, `get_post`, `get_current_article`, `get_citation`, `get_site_info`, …) from one script tag. It reads the page, feeds, sitemap, `llms.txt`, an optional prebuilt `agentprose.json`, or a CMS API. Docs: https://github.com/webmaxru/agentprose
 
 ## Rules
 

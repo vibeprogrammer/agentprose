@@ -5,7 +5,7 @@ Thanks for helping make the web readable by agents.
 ## Setup
 
 ```bash
-git clone https://github.com/vibeprogrammer/agentprose && cd agentprose
+git clone https://github.com/webmaxru/agentprose && cd agentprose
 npm install
 npm run typecheck && npm test
 npm run build            # prints gzipped sizes; fails over the size budget

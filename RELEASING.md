@@ -78,6 +78,10 @@ node scripts/purge-jsdelivr.mjs            # purges @0 and @0.1, then prints wha
 
 It ends with lines like `@0 resolves to 0.1.2; served file: /*! agentprose v0.1.2 | MIT | … */`. If a channel still shows the old version, wait a minute and run it again. Visitors whose browsers cached the previous file may keep it for up to 7 days (jsDelivr's browser cache for ranges); new visitors get the new one. Exact-version URLs (`agentprose@0.1.2`) work as soon as npm has the version.
 
+## Repository move (2026-10-19)
+
+The repository moved from `vibeprogrammer/agentprose` to `webmaxru/agentprose`; GitHub redirects the old URL. `package.json` (`repository`, `bugs`) already names the new home, but npm shows a package's metadata as it was at publish time: agentprose 0.1.3 and earlier still link to `vibeprogrammer/agentprose` on npmjs.com, and their bundle banner (`/*! agentprose v0.1.3 | MIT | https://github.com/vibeprogrammer/agentprose */`) names the old URL. **The next publish updates both**: the npm page's repository and issues links, and the banner, which `scripts/build.mjs` reads from `repository.url`. Nothing else is needed for the move: releases are published from a maintainer's machine (0.1.3 carries no provenance attestation) and the workflows use no secrets. If a trusted publisher is ever set up on npmjs.com, it must name `webmaxru/agentprose`.
+
 ## 5. Tag (optional)
 
 ```bash

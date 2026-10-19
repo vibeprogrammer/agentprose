@@ -6,7 +6,7 @@ import { site, posts } from '../demo/posts.mjs';
 
 const BASE = (process.argv[2] || 'http://localhost:8080/').replace(/\/?$/, '/');
 const OUT = process.env.DEMO_OUT || 'demo/site';
-const REPO = 'https://github.com/vibeprogrammer/agentprose';
+const REPO = 'https://github.com/webmaxru/agentprose';
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 
