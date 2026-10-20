@@ -5,7 +5,7 @@ Two steps, by two people (or one person in two hats):
 1. **Release prep** (anyone, through a pull request): the version bump and the checks below.
 2. **Publish** (a maintainer with npm rights on `agentprose`): the commands in section 2, on their own machine.
 
-Nothing publishes from CI. A version on npm is permanent: once `x.y.z` is published it can never be changed or reused, so any later change goes into the next version.
+Nothing publishes from CI unless you opt in: [docs/PUBLISHING-CI.md](docs/PUBLISHING-CI.md) describes the GitHub Actions route (`.github/workflows/release.yml`: npm trusted publishing with provenance, gated by your approval), which replaces section 2 when you use it. A version on npm is permanent: once `x.y.z` is published it can never be changed or reused, so any later change goes into the next version.
 
 ## 1. Release prep (pull request)
 
