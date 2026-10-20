@@ -12,7 +12,7 @@ Commands are for **Windows PowerShell 5.1** (`npm.cmd`, because `npm.ps1` may be
 
 | Trigger | What runs |
 | --- | --- |
-| Release published (`vX.Y.Z`) | **verify** (Node 22): the tag must equal `v` + `package.json` version, the tagged commit must be on `main`, and the version must not be on npm yet. Then typecheck, unit tests, build (size budget), `npm pack --dry-run`, and `npm publish --dry-run`. → **publish** (Node 24, npm 11): waits for your approval in the `npm` environment, builds, runs `npm publish --provenance --tag <latest/next>`, confirms the version on the registry. Then it purges the jsDelivr channels `@0` and `@<major.minor>` (stable releases only; a failed purge does not fail the release). |
+| Release published (`vX.Y.Z`) | **verify** (Node 22): the tag must equal `v` + `package.json` version, the tagged commit must be on `main`. If the version is already on npm (say you published it by hand), the run ends green with "nothing to publish". Then typecheck, unit tests, build (size budget), `npm pack --dry-run`, and `npm publish --dry-run`. → **publish** (Node 24, npm 11): waits for your approval in the `npm` environment, builds, runs `npm publish --provenance --tag <latest/next>`, confirms the version on the registry. Then it purges the jsDelivr channels `@0` and `@<major.minor>` (stable releases only; a failed purge does not fail the release). |
 | Actions → *Release to npm* → *Run workflow* | verify only (a dry run; it never publishes) |
 | A PR that changes `release.yml` | verify only |
 
@@ -109,7 +109,7 @@ npm.cmd view agentprose version --registry https://registry.npmjs.org
 npm.cmd view agentprose dist-tags --registry https://registry.npmjs.org
 ```
 
-If a check fails before approval (tag/version mismatch, version already on npm, tests), nothing was published: delete the release and tag (`gh release delete "v$v" --cleanup-tag --yes`), fix, and release again.
+If a check fails before approval (tag/version mismatch, tag not on `main`, tests), nothing was published: delete the release and tag (`gh release delete "v$v" --cleanup-tag --yes`), fix, and release again.
 
 ## Verify provenance
 
