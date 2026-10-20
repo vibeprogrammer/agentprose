@@ -251,6 +251,10 @@ npm run demo                    # builds the demo blog into demo/site
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Releases: [RELEASING.md](RELEASING.md).
 
+## Maintainer
+
+agentprose is created and maintained by Maxim Salnikov ([@webmaxru](https://github.com/webmaxru), salnikov@gmail.com). The same project family includes [agentprose Cloud](https://agentprose.cloud), which runs on this library, and the [agentprose WordPress plugin](wordpress-plugin/) (WordPress.org account `maxious`), all by the same maintainer. See [Community & open-source projects](https://agentprose.cloud/docs/community-projects).
+
 ## License
 
 [MIT](LICENSE). The core, every tool, the CLI, all adapters and the WordPress plugin are MIT, and stay that way.
