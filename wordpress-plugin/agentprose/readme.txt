@@ -105,6 +105,10 @@ Through normal WordPress plugin updates from WordPress.org. Each new version of 
 
 All tools are read-only and use only public data from your REST API: what any visitor can already read. Post content is marked as untrusted for the agent. The inspector is shown to administrators only.
 
+= Who makes this plugin? =
+
+Maxim Salnikov (WordPress.org: maxious, GitHub: webmaxru, salnikov@gmail.com). He also created and maintains the agentprose library and runs agentprose Cloud; this is the official agentprose plugin for WordPress. See https://agentprose.cloud/docs/community-projects.
+
 == Screenshots ==
 
 1. Settings → agentprose: post types, the WebMCP polyfill and the optional agentprose Cloud connection.

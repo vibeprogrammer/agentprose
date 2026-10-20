@@ -51,6 +51,10 @@ No. The library is complete on its own. The Cloud adds analytics, hosted search 
 
 It is on its way. Until it is listed, [download the zip](../../downloads/agentprose-wordpress.zip) and upload it under **Plugins → Add New Plugin → Upload Plugin**, or use the script tag.
 
+### Who maintains agentprose?
+
+Maxim Salnikov ([@webmaxru](https://github.com/webmaxru), salnikov@gmail.com) created and maintains the agentprose library, the agentprose WordPress plugin and [agentprose Cloud](https://agentprose.cloud). They are one project family; see [Community & open-source projects](https://agentprose.cloud/docs/community-projects).
+
 ### How do I update?
 
 With `agentprose@0` (jsDelivr) or `/v/0/` (Cloud) you get every 0.x release automatically. Pinned versions never change. A breaking 1.0 would ship as a new channel you opt into. See [Versioning](../../reference/versioning/).
